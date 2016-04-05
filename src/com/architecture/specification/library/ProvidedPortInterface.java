@@ -6,10 +6,10 @@ public class ProvidedPortInterface extends PortInterface {
 
 	private final HashSet<PortInterfaceCommunicationSynchronizationType> portInterfaceCommunicationSynchronizationTypes;
 
-	public ProvidedPortInterface(String portInterfaceName,
+	public ProvidedPortInterface(String portInterfaceIdentifier,
 			PortInterfaceCommunicationType portInterfaceCommunicationType,
 			HashSet<PortInterfaceCommunicationSynchronizationType> portInterfaceCommunicationSynchronizationTypes) {
-		super(portInterfaceName, portInterfaceCommunicationType);
+		super(portInterfaceIdentifier, portInterfaceCommunicationType);
 		this.portInterfaceCommunicationSynchronizationTypes = portInterfaceCommunicationSynchronizationTypes;
 	}
 

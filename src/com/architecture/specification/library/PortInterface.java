@@ -4,13 +4,22 @@ import java.util.HashSet;
 
 public abstract class PortInterface {
 
-	private final String portInterfaceIdentifier;
-	private final PortInterfaceCommunicationType portInterfaceCommunicationType;
+	private String portInterfaceIdentifier;
+	private ArchitecturalComponent ownerComponent;
+	private PortInterfaceCommunicationType portInterfaceCommunicationType;
 
 
-	public PortInterface(String portInterfaceName, PortInterfaceCommunicationType portInterfaceCommunicationType) {
-		this.portInterfaceIdentifier = portInterfaceName;
+	public PortInterface(String portInterfaceIdentifier, PortInterfaceCommunicationType portInterfaceCommunicationType) {
+		this.portInterfaceIdentifier = portInterfaceIdentifier;
 		this.portInterfaceCommunicationType = portInterfaceCommunicationType;
+	}
+
+	public void setOwnerComponent(ArchitecturalComponent ownerComponent) {
+		this.ownerComponent = ownerComponent;
+	}
+	
+	public ArchitecturalComponent getOwnerComponent() {
+		return ownerComponent;
 	}
 
 	public String getPortInterfaceIdentifier() {

@@ -5,10 +5,11 @@ import java.util.HashSet;
 public class RequiredPortInterface extends PortInterface {
 
 	private PortInterfaceCommunicationSynchronizationType portInterfaceCommunicationSynchronizationType;
-	public RequiredPortInterface(String portInterfaceName,
+
+	public RequiredPortInterface(String portInterfaceIdentifier,
 			PortInterfaceCommunicationType portInterfaceCommunicationType,
 			PortInterfaceCommunicationSynchronizationType portInterfaceCommunicationSynchronizationType) {
-		super(portInterfaceName, portInterfaceCommunicationType);
+		super(portInterfaceIdentifier, portInterfaceCommunicationType);
 		this.portInterfaceCommunicationSynchronizationType = portInterfaceCommunicationSynchronizationType;
 	}
 
@@ -16,7 +17,7 @@ public class RequiredPortInterface extends PortInterface {
 	public PortInterfaceType getPortInterfaceType() {
 		return PortInterfaceType.REQUIRED;
 	}
-	
+
 	public PortInterfaceCommunicationSynchronizationType getPortInterfaceCommunicationSynchronizationType() {
 		return portInterfaceCommunicationSynchronizationType;
 	}
@@ -36,6 +37,7 @@ public class RequiredPortInterface extends PortInterface {
 
 		RequiredPortInterface rhs = (RequiredPortInterface) obj;
 		return (this.getPortInterfaceIdentifier().equals(rhs.getPortInterfaceIdentifier())
+				&& this.getOwnerComponent().equals(rhs.getOwnerComponent())
 				&& this.getPortInterfaceCommunicationSynchronizationType() == rhs
 						.getPortInterfaceCommunicationSynchronizationType());
 	}

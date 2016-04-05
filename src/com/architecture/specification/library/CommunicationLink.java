@@ -9,7 +9,7 @@ public class CommunicationLink {
 		this.providedPortInterface = providedPortInterface;
 		this.requiredPortInterface = requiredPortInterface;
 	}
-	
+
 	public ProvidedPortInterface getProvidedPortInterface() {
 		return providedPortInterface;
 	}
@@ -17,6 +17,5 @@ public class CommunicationLink {
 	public RequiredPortInterface getRequiredPortInterface() {
 		return requiredPortInterface;
 	}
-	
-	
+
 }
