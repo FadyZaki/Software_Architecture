@@ -1,7 +1,5 @@
 package com.architecture.specification.library;
 
-import java.util.HashSet;
-
 public abstract class PortInterface {
 
 	private String portInterfaceIdentifier;
@@ -12,6 +10,12 @@ public abstract class PortInterface {
 	public PortInterface(String portInterfaceIdentifier, PortInterfaceCommunicationType portInterfaceCommunicationType) {
 		this.portInterfaceIdentifier = portInterfaceIdentifier;
 		this.portInterfaceCommunicationType = portInterfaceCommunicationType;
+	}
+	
+	public PortInterface(String portInterfaceIdentifier, PortInterfaceCommunicationType portInterfaceCommunicationType, ArchitecturalComponent ownerComponent) {
+		this.portInterfaceIdentifier = portInterfaceIdentifier;
+		this.portInterfaceCommunicationType = portInterfaceCommunicationType;
+		this.ownerComponent = ownerComponent;
 	}
 
 	public void setOwnerComponent(ArchitecturalComponent ownerComponent) {

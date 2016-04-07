@@ -18,9 +18,9 @@ public class ArchitecturalComponent {
 		this.componentIdentifier = componentIdentifier;
 		this.parentComponent = parentComponent;
 		this.childrenComponents = new HashSet<ArchitecturalComponent>();
-		this.componentClasses = componentClasses;
-		this.providedInterfaces = providedInterfaces;
-		this.requiredInterfaces = requiredInterfaces;
+		this.componentClasses = componentClasses != null ? componentClasses : new HashSet<String>();
+		this.providedInterfaces = providedInterfaces != null ? providedInterfaces : new HashSet<ProvidedPortInterface>();
+		this.requiredInterfaces = requiredInterfaces != null ? requiredInterfaces : new HashSet<RequiredPortInterface>();
 	}
 
 	public String getComponentIdentifier() {

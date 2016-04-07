@@ -39,6 +39,20 @@ public class ArchitecturalModel {
 		return componentsIdentifiersMap;
 	}
 
+	public HashMap<RequiredPortInterface, HashSet<ArchitecturalComponent>> getUsedRequiredPortInterfacesComponentsMap() {
+		HashMap<RequiredPortInterface, HashSet<ArchitecturalComponent>> requiredPortInterfacesComponentsMap = new HashMap<RequiredPortInterface, HashSet<ArchitecturalComponent>>();
+		for (CommunicationLink cl : communicationLinks) {
+			HashSet<ArchitecturalComponent> requiredPortComponents = requiredPortInterfacesComponentsMap
+					.containsKey(cl.getRequiredPortInterface())
+							? requiredPortInterfacesComponentsMap.get(cl.getRequiredPortInterface())
+							: new HashSet<ArchitecturalComponent>();
+			requiredPortComponents.add(cl.getRequiredPortInterface().getOwnerComponent());
+			requiredPortInterfacesComponentsMap.put(cl.getRequiredPortInterface(), requiredPortComponents);
+		}
+
+		return requiredPortInterfacesComponentsMap;
+	}
+
 	public HashMap<RequiredPortInterface, Integer> getRequiredPortInterfacesCommunicationLinksCountMap() {
 		HashMap<RequiredPortInterface, Integer> requiredPortInterfacesCommunicationLinksCountMap = new HashMap<RequiredPortInterface, Integer>();
 		for (CommunicationLink c : communicationLinks) {

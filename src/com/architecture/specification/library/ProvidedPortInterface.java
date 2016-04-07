@@ -12,6 +12,13 @@ public class ProvidedPortInterface extends PortInterface {
 		super(portInterfaceIdentifier, portInterfaceCommunicationType);
 		this.portInterfaceCommunicationSynchronizationTypes = portInterfaceCommunicationSynchronizationTypes;
 	}
+	
+	public ProvidedPortInterface(String portInterfaceIdentifier,
+			PortInterfaceCommunicationType portInterfaceCommunicationType, ArchitecturalComponent ownerComponent,
+			HashSet<PortInterfaceCommunicationSynchronizationType> portInterfaceCommunicationSynchronizationTypes) {
+		super(portInterfaceIdentifier, portInterfaceCommunicationType, ownerComponent);
+		this.portInterfaceCommunicationSynchronizationTypes = portInterfaceCommunicationSynchronizationTypes;
+	}
 
 	@Override
 	public PortInterfaceType getPortInterfaceType() {

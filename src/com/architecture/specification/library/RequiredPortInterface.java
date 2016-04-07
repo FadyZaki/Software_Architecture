@@ -12,6 +12,13 @@ public class RequiredPortInterface extends PortInterface {
 		super(portInterfaceIdentifier, portInterfaceCommunicationType);
 		this.portInterfaceCommunicationSynchronizationType = portInterfaceCommunicationSynchronizationType;
 	}
+	
+	public RequiredPortInterface(String portInterfaceIdentifier,
+			PortInterfaceCommunicationType portInterfaceCommunicationType, ArchitecturalComponent ownerComponent,
+			PortInterfaceCommunicationSynchronizationType portInterfaceCommunicationSynchronizationType) {
+		super(portInterfaceIdentifier, portInterfaceCommunicationType, ownerComponent);
+		this.portInterfaceCommunicationSynchronizationType = portInterfaceCommunicationSynchronizationType;
+	}
 
 	@Override
 	public PortInterfaceType getPortInterfaceType() {
@@ -37,7 +44,6 @@ public class RequiredPortInterface extends PortInterface {
 
 		RequiredPortInterface rhs = (RequiredPortInterface) obj;
 		return (this.getPortInterfaceIdentifier().equals(rhs.getPortInterfaceIdentifier())
-				&& this.getOwnerComponent().equals(rhs.getOwnerComponent())
 				&& this.getPortInterfaceCommunicationSynchronizationType() == rhs
 						.getPortInterfaceCommunicationSynchronizationType());
 	}
