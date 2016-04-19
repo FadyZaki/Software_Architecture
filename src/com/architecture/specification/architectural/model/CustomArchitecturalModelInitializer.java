@@ -28,36 +28,36 @@ public class CustomArchitecturalModelInitializer extends ArchitecturalModelIniti
 	@Override
 	public void initializeArchitecturalComponents() {
 
-		HashSet<ProvidedPortInterface> guiProvidedInterfaces = new HashSet<ProvidedPortInterface>();
-		guiProvidedInterfaces.add(new ProvidedPortInterface("updateGui", PortInterfaceCommunicationType.METHOD_CALL,
-				new HashSet<PortInterfaceCommunicationSynchronizationType>(
-						Arrays.asList(new PortInterfaceCommunicationSynchronizationType[] {
-								PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_NO_CALLBACK }))));
-		architecturalModelBuilder.addComponent(GUI_COMPONENT, null,
-				new HashSet<String>(Arrays.asList(new String[] { "VectorGraphicsGuiDelegate", "DrawingPanel" })),
-				guiProvidedInterfaces, null);
-
-		HashSet<RequiredPortInterface> shapesModelRequiredInterfaces = new HashSet<RequiredPortInterface>();
-		shapesModelRequiredInterfaces
-				.add(new RequiredPortInterface("updateGui", PortInterfaceCommunicationType.METHOD_CALL,
-						PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_NO_CALLBACK));
-
-		architecturalModelBuilder.addComponent(SHAPES_MODEL_COMPONENT, null,
-				new HashSet<String>(Arrays.asList(new String[] { "VectorGraphicsModel" })), null,
-				shapesModelRequiredInterfaces);
+//		HashSet<ProvidedPortInterface> guiProvidedInterfaces = new HashSet<ProvidedPortInterface>();
+//		guiProvidedInterfaces.add(new ProvidedPortInterface("updateGui", PortInterfaceCommunicationType.METHOD_CALL,
+//				new HashSet<PortInterfaceCommunicationSynchronizationType>(
+//						Arrays.asList(new PortInterfaceCommunicationSynchronizationType[] {
+//								PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_NO_CALLBACK }))));
+//		architecturalModelBuilder.addComponent(GUI_COMPONENT, null,
+//				new HashSet<String>(Arrays.asList(new String[] { "VectorGraphicsGuiDelegate", "DrawingPanel" })),
+//				guiProvidedInterfaces, null);
+//
+//		HashSet<RequiredPortInterface> shapesModelRequiredInterfaces = new HashSet<RequiredPortInterface>();
+//		shapesModelRequiredInterfaces
+//				.add(new RequiredPortInterface("updateGui", PortInterfaceCommunicationType.METHOD_CALL,
+//						PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_NO_CALLBACK));
+//
+//		architecturalModelBuilder.addComponent(SHAPES_MODEL_COMPONENT, null,
+//				new HashSet<String>(Arrays.asList(new String[] { "VectorGraphicsModel" })), null,
+//				shapesModelRequiredInterfaces);
 
 	}
 
 	@Override
 	public void initializeComponentsCommunicationLinks() {
-		architecturalModelBuilder.addCommunicationLink(GUI_COMPONENT, SHAPES_MODEL_COMPONENT, "updateGui");
+//		architecturalModelBuilder.addCommunicationLink(GUI_COMPONENT, SHAPES_MODEL_COMPONENT, "updateGui");
 
 	}
 
 	@Override
 	public void initializeConcurrentComponentsMap() {
-		architecturalModelBuilder.addConcurrentComponentsEntry(GUI_COMPONENT, new ArrayList<String> (Arrays.asList(new String[] { SHAPES_MODEL_COMPONENT })));
-		architecturalModelBuilder.addConcurrentComponentsEntry(SHAPES_MODEL_COMPONENT, new ArrayList<String> (Arrays.asList(new String[] { GUI_COMPONENT })));
+//		architecturalModelBuilder.addConcurrentComponentsEntry(GUI_COMPONENT, new ArrayList<String> (Arrays.asList(new String[] { SHAPES_MODEL_COMPONENT })));
+//		architecturalModelBuilder.addConcurrentComponentsEntry(SHAPES_MODEL_COMPONENT, new ArrayList<String> (Arrays.asList(new String[] { GUI_COMPONENT })));
 	}
 	
 }

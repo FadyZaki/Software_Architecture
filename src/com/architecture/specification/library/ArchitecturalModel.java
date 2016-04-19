@@ -46,7 +46,7 @@ public class ArchitecturalModel {
 					.containsKey(cl.getRequiredPortInterface())
 							? requiredPortInterfacesComponentsMap.get(cl.getRequiredPortInterface())
 							: new HashSet<ArchitecturalComponent>();
-			requiredPortComponents.add(cl.getRequiredPortInterface().getOwnerComponent());
+			requiredPortComponents.add(cl.getRequiringComponent());
 			requiredPortInterfacesComponentsMap.put(cl.getRequiredPortInterface(), requiredPortComponents);
 		}
 
