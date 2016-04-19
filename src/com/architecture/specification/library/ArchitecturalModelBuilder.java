@@ -16,6 +16,10 @@ import com.architecture.specification.library.exceptions.UnusedRequiredPortInter
 
 public class ArchitecturalModelBuilder implements IArchitecturalModelBuilder {
 
+	public ArchitecturalModel getArchitecturalModel() {
+		return architecturalModel;
+	}
+
 	private ArchitecturalModel architecturalModel;
 
 	public ArchitecturalModelBuilder() {
