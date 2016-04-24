@@ -2,5 +2,5 @@ package com.architecture.specification.library;
 
 public enum PortInterfaceCommunicationType {
 
-	METHOD_CALL, SHARED_DATA
+	TASK_EXECUTION, SHARED_DATA, MESSAGE_PASSING
 }
