@@ -8,18 +8,23 @@ import com.architecture.specification.library.exceptions.IncompatiblePortInterfa
 
 public class ArchitecturalModel {
 
-	private HashSet<ArchitecturalComponent> modelComponents;
+	private HashMap<String, ArchitecturalComponent> modelComponentsIdentifiersMap;
 	private HashSet<CommunicationLink> communicationLinks;
 	private HashMap<ArchitecturalComponent, HashSet<ArchitecturalComponent>> concurrentComponentsMap;
 
+	private HashMap<String, ProvidedPortInterface> modelProvidedPortInterfacesMap;
+	private HashMap<String, RequiredPortInterface> modelRequiredPortInterfacesMap;
+
 	public ArchitecturalModel() {
-		modelComponents = new HashSet<ArchitecturalComponent>();
+		modelComponentsIdentifiersMap = new HashMap<String, ArchitecturalComponent>();
 		communicationLinks = new HashSet<CommunicationLink>();
 		concurrentComponentsMap = new HashMap<ArchitecturalComponent, HashSet<ArchitecturalComponent>>();
+		modelProvidedPortInterfacesMap = new HashMap<String, ProvidedPortInterface>();
+		modelRequiredPortInterfacesMap = new HashMap<String, RequiredPortInterface>();
 	}
 
-	public HashSet<ArchitecturalComponent> getModelComponents() {
-		return modelComponents;
+	public HashMap<String, ArchitecturalComponent> getModelComponentsIdentifiersMap() {
+		return modelComponentsIdentifiersMap;
 	}
 
 	public HashSet<CommunicationLink> getCommunicationLinks() {
@@ -29,14 +34,13 @@ public class ArchitecturalModel {
 	public HashMap<ArchitecturalComponent, HashSet<ArchitecturalComponent>> getConcurrentComponentsMap() {
 		return concurrentComponentsMap;
 	}
+	
+	public HashMap<String, ProvidedPortInterface> getModelProvidedPortInterfacesMap() {
+		return modelProvidedPortInterfacesMap;
+	}
 
-	public HashMap<String, ArchitecturalComponent> getArchitecturalComponentsIdentifiersMap() {
-		HashMap<String, ArchitecturalComponent> componentsIdentifiersMap = new HashMap<String, ArchitecturalComponent>();
-		for (ArchitecturalComponent c : modelComponents) {
-			componentsIdentifiersMap.put(c.getComponentIdentifier(), c);
-		}
-
-		return componentsIdentifiersMap;
+	public HashMap<String, RequiredPortInterface> getModelRequiredPortInterfacesMap() {
+		return modelRequiredPortInterfacesMap;
 	}
 
 	public HashMap<RequiredPortInterface, HashSet<ArchitecturalComponent>> getUsedRequiredPortInterfacesComponentsMap() {

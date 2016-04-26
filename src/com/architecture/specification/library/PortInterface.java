@@ -30,6 +30,13 @@ public abstract class PortInterface {
 				+ HelperConstants.UNDERSCORE_SYMBOL + portInterfaceCommunicationSynchronizationType.toString();
 	}
 
+	public static String constructPortInterfaceSignature(String portInterfaceIdentifier,
+			PortInterfaceCommunicationType portInterfaceCommunicationType,
+			PortInterfaceCommunicationSynchronizationType portInterfaceCommunicationSynchronizationType) {
+		return portInterfaceIdentifier + HelperConstants.UNDERSCORE_SYMBOL + portInterfaceCommunicationType.toString()
+				+ HelperConstants.UNDERSCORE_SYMBOL + portInterfaceCommunicationSynchronizationType.toString();
+	}
+
 	public abstract PortInterfaceType getPortInterfaceType();
 
 	@Override
