@@ -9,6 +9,7 @@ import com.architecture.specification.library.PortInterfaceCommunicationType;
 import com.architecture.specification.library.PortInterfaceType;
 import com.architecture.specification.library.ProvidedPortInterface;
 import com.architecture.specification.library.RequiredPortInterface;
+import com.architecture.specification.library.exceptions.ComponentNotDescendantOfAnotherException;
 import com.architecture.specification.library.exceptions.ComponentNotFoundException;
 import com.architecture.specification.library.exceptions.PortInterfaceNotDefinedInComponentException;
 import com.architecture.specification.library.exceptions.PortInterfaceNotFoundException;
@@ -285,52 +286,52 @@ public class CustomArchitecturalModelInitializer extends ArchitecturalModelIniti
 
 	@Override
 	public void initializeModelComponentsCommunicationLinks()
-			throws ComponentNotFoundException, PortInterfaceNotDefinedInComponentException, PortInterfaceNotFoundException {
-		architecturalModelBuilder.addCommunicationLink(CLIENT_COMPONENT, SERVER_COMPONENT, SOCKET_PORT,
-				PortInterfaceCommunicationType.MESSAGE_PASSING,
+			throws ComponentNotFoundException, PortInterfaceNotDefinedInComponentException, PortInterfaceNotFoundException, ComponentNotDescendantOfAnotherException {
+		architecturalModelBuilder.addCommunicationLink(CLIENT_COMPONENT, SERVER_COMPONENT, SERVER_HANDLER_COMPONENT, SOCKET_PORT,
+				 PortInterfaceCommunicationType.MESSAGE_PASSING,
 				PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_CALLBACK);
 
-		architecturalModelBuilder.addCommunicationLink(GEO_LOCATOR_COMPONENT, SOCIAL_NETWORK_COMPONENT,
+		architecturalModelBuilder.addCommunicationLink(GEO_LOCATOR_COMPONENT, SOCIAL_NETWORK_COMPONENT, null,
 				IDENTIFY_GEO_LOCATION_USING_IP_ADDRESS_PORT, PortInterfaceCommunicationType.TASK_EXECUTION,
 				PortInterfaceCommunicationSynchronizationType.SYNC);
 		
-		architecturalModelBuilder.addCommunicationLink(SOCIAL_NETWORK_COMPONENT, CLIENT_HANDLER_COMPONENT,
+		architecturalModelBuilder.addCommunicationLink(SOCIAL_NETWORK_COMPONENT, CLIENT_HANDLER_COMPONENT, null,
 				REGISTER_USER_PORT, PortInterfaceCommunicationType.TASK_EXECUTION,
 				PortInterfaceCommunicationSynchronizationType.SYNC);
-		architecturalModelBuilder.addCommunicationLink(SOCIAL_NETWORK_COMPONENT, CLIENT_HANDLER_COMPONENT,
+		architecturalModelBuilder.addCommunicationLink(SOCIAL_NETWORK_COMPONENT, CLIENT_HANDLER_COMPONENT, null,
 				AUTHORIZE_USER_PORT, PortInterfaceCommunicationType.TASK_EXECUTION,
 				PortInterfaceCommunicationSynchronizationType.SYNC);
-		architecturalModelBuilder.addCommunicationLink(SOCIAL_NETWORK_COMPONENT, CLIENT_HANDLER_COMPONENT,
+		architecturalModelBuilder.addCommunicationLink(SOCIAL_NETWORK_COMPONENT, CLIENT_HANDLER_COMPONENT, null,
 				POST_MESSAGE_PORT, PortInterfaceCommunicationType.TASK_EXECUTION,
 				PortInterfaceCommunicationSynchronizationType.SYNC);
-		architecturalModelBuilder.addCommunicationLink(SOCIAL_NETWORK_COMPONENT, CLIENT_HANDLER_COMPONENT,
+		architecturalModelBuilder.addCommunicationLink(SOCIAL_NETWORK_COMPONENT, CLIENT_HANDLER_COMPONENT, null,
 				REPLY_TO_MESSAGE_PORT, PortInterfaceCommunicationType.TASK_EXECUTION,
 				PortInterfaceCommunicationSynchronizationType.SYNC);
-		architecturalModelBuilder.addCommunicationLink(SOCIAL_NETWORK_COMPONENT, CLIENT_HANDLER_COMPONENT,
+		architecturalModelBuilder.addCommunicationLink(SOCIAL_NETWORK_COMPONENT, CLIENT_HANDLER_COMPONENT, null,
 				DELETE_MESSAGE_PORT, PortInterfaceCommunicationType.TASK_EXECUTION,
 				PortInterfaceCommunicationSynchronizationType.SYNC);
-		architecturalModelBuilder.addCommunicationLink(SOCIAL_NETWORK_COMPONENT, CLIENT_HANDLER_COMPONENT,
+		architecturalModelBuilder.addCommunicationLink(SOCIAL_NETWORK_COMPONENT, CLIENT_HANDLER_COMPONENT, null,
 				SOCIAL_NETWORK_STATE_PORT, PortInterfaceCommunicationType.SHARED_DATA,
 				PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_NO_CALLBACK);
 		
-		architecturalModelBuilder.addCommunicationLink(USER_COMPONENT, SOCIAL_NETWORK_COMPONENT,
+		architecturalModelBuilder.addCommunicationLink(USER_COMPONENT, SOCIAL_NETWORK_COMPONENT, null,
 				USER_INFORMATION_PORT, PortInterfaceCommunicationType.SHARED_DATA,
 				PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_NO_CALLBACK);
-		architecturalModelBuilder.addCommunicationLink(USER_COMPONENT, SOCIAL_NETWORK_COMPONENT,
+		architecturalModelBuilder.addCommunicationLink(USER_COMPONENT, SOCIAL_NETWORK_COMPONENT, null,
 				USER_ACCOUNT_TYPE_PORT, PortInterfaceCommunicationType.SHARED_DATA,
 				PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_NO_CALLBACK);
-		architecturalModelBuilder.addCommunicationLink(USER_COMPONENT, SOCIAL_NETWORK_COMPONENT,
+		architecturalModelBuilder.addCommunicationLink(USER_COMPONENT, SOCIAL_NETWORK_COMPONENT, null,
 				USER_SUBSCRIPTION_FEE_PORT, PortInterfaceCommunicationType.SHARED_DATA,
 				PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_NO_CALLBACK);
 		
-		architecturalModelBuilder.addCommunicationLink(MESSAGE_COMPONENT, SOCIAL_NETWORK_COMPONENT,
+		architecturalModelBuilder.addCommunicationLink(MESSAGE_COMPONENT, SOCIAL_NETWORK_COMPONENT, null,
 				MESSAGE_INFORMATION_PORT, PortInterfaceCommunicationType.SHARED_DATA,
 				PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_NO_CALLBACK);
-		architecturalModelBuilder.addCommunicationLink(MESSAGE_COMPONENT, SOCIAL_NETWORK_COMPONENT,
+		architecturalModelBuilder.addCommunicationLink(MESSAGE_COMPONENT, SOCIAL_NETWORK_COMPONENT, null,
 				MESSAGE_REPLIES_PORT, PortInterfaceCommunicationType.SHARED_DATA,
 				PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_NO_CALLBACK);
 		
-		architecturalModelBuilder.addCommunicationLink(SERVER_HANDLER_COMPONENT, UI_COMPONENT,
+		architecturalModelBuilder.addCommunicationLink(SERVER_HANDLER_COMPONENT, UI_COMPONENT, null,
 				HANDLE_CLIENT_COMMANDS_PORT, PortInterfaceCommunicationType.TASK_EXECUTION,
 				PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_CALLBACK);
 		

@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import com.architecture.specification.architectural.model.CustomArchitecturalModelInitializer;
+import com.architecture.specification.library.exceptions.ComponentNotDescendantOfAnotherException;
 import com.architecture.specification.library.exceptions.ComponentNotFoundException;
 import com.architecture.specification.library.exceptions.IncompatiblePortInterfacesException;
 import com.architecture.specification.library.exceptions.PortInterfaceNotDefinedInComponentException;
@@ -32,7 +33,7 @@ public class ArchitecturalModelBuilder implements IArchitecturalModelBuilder {
 	@Override
 	public void buildArchitecturalModel(CustomArchitecturalModelInitializer initializer)
 			throws IncompatiblePortInterfacesException, UnusedRequiredPortInterfaceException, UnusedComponentException,
-			ComponentNotFoundException, PortInterfaceNotDefinedInComponentException, PortInterfaceNotFoundException {
+			ComponentNotFoundException, PortInterfaceNotDefinedInComponentException, PortInterfaceNotFoundException, ComponentNotDescendantOfAnotherException {
 
 		initializer.initializeModelPortInterfaces();
 		initializer.initializeModelArchitecturalComponents();
@@ -249,10 +250,11 @@ public class ArchitecturalModelBuilder implements IArchitecturalModelBuilder {
 	}
 
 	public void addCommunicationLink(String providingComponentIdentifier, String requiringComponentIdentifier,
-			String portInterfaceIdentifier, PortInterfaceCommunicationType portInterfaceCommunicationType,
+			String innermostProvidingComponentIdentifier, String portInterfaceIdentifier,
+			PortInterfaceCommunicationType portInterfaceCommunicationType,
 			PortInterfaceCommunicationSynchronizationType portInterfaceCommunicationSynchronizationType)
 					throws ComponentNotFoundException, PortInterfaceNotDefinedInComponentException,
-					PortInterfaceNotFoundException {
+					PortInterfaceNotFoundException, ComponentNotDescendantOfAnotherException {
 		HashMap<String, ArchitecturalComponent> componentsIdentifersMap = architecturalModel
 				.getModelComponentsIdentifiersMap();
 		ArchitecturalComponent providingComponent = componentsIdentifersMap.get(providingComponentIdentifier);
@@ -280,8 +282,34 @@ public class ArchitecturalModelBuilder implements IArchitecturalModelBuilder {
 		if (!requiringComponentPortInterfacesMap.containsKey(r.getPortInterfaceSignature()))
 			throw new PortInterfaceNotDefinedInComponentException(r.getPortInterfaceSignature(), requiringComponent);
 
-		CommunicationLink communicationLink = new CommunicationLink(providingComponent, requiringComponent, p, r);
+		ArchitecturalComponent innermostProvidingComponent = null;
+		if (innermostProvidingComponentIdentifier != null) {
+			innermostProvidingComponent = componentsIdentifersMap.get(innermostProvidingComponentIdentifier);
+			if (innermostProvidingComponent == null)
+				throw new ComponentNotFoundException(innermostProvidingComponentIdentifier);
+
+			if (!componentIsDescendantOfAnother(innermostProvidingComponent, providingComponent))
+				throw new ComponentNotDescendantOfAnotherException(innermostProvidingComponent.getComponentIdentifier(),
+						providingComponent.getComponentIdentifier());
+
+			if (!innermostProvidingComponent.getProvidedInterfacesMap().containsKey(p.getPortInterfaceSignature()))
+				throw new PortInterfaceNotDefinedInComponentException(p.getPortInterfaceSignature(),
+						innermostProvidingComponent);
+
+		}
+
+		CommunicationLink communicationLink = new CommunicationLink(providingComponent, requiringComponent,
+				innermostProvidingComponent, p, r);
 		architecturalModel.getCommunicationLinks().add(communicationLink);
+	}
+
+	private boolean componentIsDescendantOfAnother(ArchitecturalComponent descendantComponent,
+			ArchitecturalComponent parentComponent) {
+		while ((descendantComponent = descendantComponent.getParentComponent()) != null) {
+			if (descendantComponent.equals(parentComponent))
+				return true;
+		}
+		return false;
 	}
 
 	public void addConcurrentComponentsEntry(String componentIdentifier,

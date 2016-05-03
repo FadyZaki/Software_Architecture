@@ -1,8 +1,10 @@
 package com.architecture.specification.architectural.model;
+
 import java.io.IOException;
 
 import com.architecture.specification.library.ArchitecturalModelBuilder;
 import com.architecture.specification.library.ArchitecturalModelParser;
+import com.architecture.specification.library.exceptions.ComponentNotDescendantOfAnotherException;
 import com.architecture.specification.library.exceptions.ComponentNotFoundException;
 import com.architecture.specification.library.exceptions.IncompatiblePortInterfacesException;
 import com.architecture.specification.library.exceptions.PortInterfaceNotDefinedInComponentException;
@@ -12,17 +14,23 @@ import com.architecture.specification.library.exceptions.UnusedRequiredPortInter
 
 import japa.parser.ParseException;
 
+public class JavaADL {
 
-public class MainClass {
+	public static void main(String[] args)
+			throws IncompatiblePortInterfacesException, UnusedRequiredPortInterfaceException, UnusedComponentException,
+			IOException, ParseException, ComponentNotFoundException, PortInterfaceNotDefinedInComponentException,
+			PortInterfaceNotFoundException, ComponentNotDescendantOfAnotherException {
 
-	public static void main(String[] args) throws IncompatiblePortInterfacesException, UnusedRequiredPortInterfaceException, UnusedComponentException, IOException, ParseException, ComponentNotFoundException, PortInterfaceNotDefinedInComponentException, PortInterfaceNotFoundException {
-		
 		ArchitecturalModelBuilder architecturalModelBuilder = new ArchitecturalModelBuilder();
-		CustomArchitecturalModelInitializer customArchitecturalModelInitializer = new CustomArchitecturalModelInitializer(architecturalModelBuilder);
+		CustomArchitecturalModelInitializer customArchitecturalModelInitializer = new CustomArchitecturalModelInitializer(
+				architecturalModelBuilder);
 		architecturalModelBuilder.buildArchitecturalModel(customArchitecturalModelInitializer);
-		
-		String sourceFilesDirectory = "/src";
-		ArchitecturalModelParser.verifyAgainstImplementation(sourceFilesDirectory, architecturalModelBuilder.getArchitecturalModel());
-		
+		System.out.println("Architectural Model Successfully built");
+
+		// String sourceFilesDirectory =
+		// "D:/Work/TrialWorkspace/CS5001-150023144-practical-04/src";
+		// ArchitecturalModelParser.verifyAgainstImplementation(sourceFilesDirectory,
+		// architecturalModelBuilder.getArchitecturalModel());
+
 	}
 }

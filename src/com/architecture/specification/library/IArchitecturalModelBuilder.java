@@ -1,6 +1,7 @@
 package com.architecture.specification.library;
 
 import com.architecture.specification.architectural.model.CustomArchitecturalModelInitializer;
+import com.architecture.specification.library.exceptions.ComponentNotDescendantOfAnotherException;
 import com.architecture.specification.library.exceptions.ComponentNotFoundException;
 import com.architecture.specification.library.exceptions.IncompatiblePortInterfacesException;
 import com.architecture.specification.library.exceptions.PortInterfaceNotDefinedInComponentException;
@@ -11,6 +12,6 @@ import com.architecture.specification.library.exceptions.UnusedRequiredPortInter
 public interface IArchitecturalModelBuilder {
 
 	public void buildArchitecturalModel(CustomArchitecturalModelInitializer customArchitecturalModelInitializer)
-			throws IncompatiblePortInterfacesException, UnusedRequiredPortInterfaceException, UnusedComponentException, ComponentNotFoundException, PortInterfaceNotDefinedInComponentException, PortInterfaceNotFoundException;
+			throws IncompatiblePortInterfacesException, UnusedRequiredPortInterfaceException, UnusedComponentException, ComponentNotFoundException, PortInterfaceNotDefinedInComponentException, PortInterfaceNotFoundException, ComponentNotDescendantOfAnotherException;
 	
 }

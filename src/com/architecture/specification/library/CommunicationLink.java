@@ -4,13 +4,15 @@ public class CommunicationLink {
 
 	private final ArchitecturalComponent providingComponent;
 	private final ArchitecturalComponent requiringComponent;
+	private final ArchitecturalComponent innermostProvidingComponent;
 	private final ProvidedPortInterface providedPortInterface;	
 	private final RequiredPortInterface requiredPortInterface;
 	
-	public CommunicationLink(ArchitecturalComponent providingComponent, ArchitecturalComponent requiringComponent,
+	public CommunicationLink(ArchitecturalComponent providingComponent, ArchitecturalComponent requiringComponent, ArchitecturalComponent innermostProvidingComponent,
 			ProvidedPortInterface providedPortInterface, RequiredPortInterface requiredPortInterface) {
 		this.providingComponent = providingComponent;
 		this.requiringComponent = requiringComponent;
+		this.innermostProvidingComponent = innermostProvidingComponent;
 		this.providedPortInterface = providedPortInterface;
 		this.requiredPortInterface = requiredPortInterface;
 	}
@@ -21,6 +23,10 @@ public class CommunicationLink {
 
 	public ArchitecturalComponent getRequiringComponent() {
 		return requiringComponent;
+	}
+	
+	public ArchitecturalComponent getInnermostProvidingComponent() {
+		return innermostProvidingComponent;
 	}
 
 	public ProvidedPortInterface getProvidedPortInterface() {
