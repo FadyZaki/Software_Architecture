@@ -1,5 +1,6 @@
 package com.architecture.specification.library;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -8,17 +9,17 @@ public class ArchitecturalComponent {
 	private String componentIdentifier;
 	private ArchitecturalComponent parentComponent;
 	private HashSet<ArchitecturalComponent> childrenComponents;
-	private HashSet<String> componentClasses;
+	private ArrayList<String> componentClasses;
 	private HashSet<ProvidedPortInterface> providedInterfaces;
 	private HashSet<RequiredPortInterface> requiredInterfaces;
 
 	public ArchitecturalComponent(String componentIdentifier, ArchitecturalComponent parentComponent,
-			HashSet<String> componentClasses, HashSet<ProvidedPortInterface> providedInterfaces,
+			ArrayList<String> componentClasses, HashSet<ProvidedPortInterface> providedInterfaces,
 			HashSet<RequiredPortInterface> requiredInterfaces) {
 		this.componentIdentifier = componentIdentifier;
 		this.parentComponent = parentComponent;
 		this.childrenComponents = new HashSet<ArchitecturalComponent>();
-		this.componentClasses = componentClasses != null ? componentClasses : new HashSet<String>();
+		this.componentClasses = componentClasses != null ? componentClasses : new ArrayList<String>();
 		this.providedInterfaces = providedInterfaces != null ? providedInterfaces : new HashSet<ProvidedPortInterface>();
 		this.requiredInterfaces = requiredInterfaces != null ? requiredInterfaces : new HashSet<RequiredPortInterface>();
 	}
@@ -27,7 +28,7 @@ public class ArchitecturalComponent {
 		return componentIdentifier;
 	}
 
-	public HashSet<String> getComponentClasses() {
+	public ArrayList<String> getComponentClasses() {
 		return componentClasses;
 	}
 

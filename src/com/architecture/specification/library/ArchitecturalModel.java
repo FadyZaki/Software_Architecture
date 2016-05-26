@@ -3,6 +3,7 @@ package com.architecture.specification.library;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import com.architecture.specification.library.exceptions.IncompatiblePortInterfacesException;
 
@@ -34,7 +35,7 @@ public class ArchitecturalModel {
 	public HashMap<ArchitecturalComponent, HashSet<ArchitecturalComponent>> getConcurrentComponentsMap() {
 		return concurrentComponentsMap;
 	}
-	
+
 	public HashMap<String, ProvidedPortInterface> getModelProvidedPortInterfacesMap() {
 		return modelProvidedPortInterfacesMap;
 	}
@@ -57,6 +58,7 @@ public class ArchitecturalModel {
 		return requiredPortInterfacesComponentsMap;
 	}
 
+	// NOT_USED
 	public HashMap<RequiredPortInterface, Integer> getRequiredPortInterfacesCommunicationLinksCountMap() {
 		HashMap<RequiredPortInterface, Integer> requiredPortInterfacesCommunicationLinksCountMap = new HashMap<RequiredPortInterface, Integer>();
 		for (CommunicationLink c : communicationLinks) {
@@ -66,6 +68,22 @@ public class ArchitecturalModel {
 		}
 
 		return requiredPortInterfacesCommunicationLinksCountMap;
+	}
+
+	public HashMap<String, HashSet<ArchitecturalComponent>> getClassComponentsMap() {
+		HashMap<String, HashSet<ArchitecturalComponent>> classComponentsMap = new HashMap<String, HashSet<ArchitecturalComponent>>();
+		for (ArchitecturalComponent c : modelComponentsIdentifiersMap.values()) {
+			for (String classFullName :c.getComponentClasses()) {
+				HashSet<ArchitecturalComponent> classComponents = classComponentsMap
+						.containsKey(classFullName)
+								? classComponentsMap.get(classFullName)
+								: new HashSet<ArchitecturalComponent>();
+				classComponents.add(c);
+				classComponentsMap.put(classFullName, classComponents);
+			}
+		}
+
+		return classComponentsMap;
 	}
 
 }

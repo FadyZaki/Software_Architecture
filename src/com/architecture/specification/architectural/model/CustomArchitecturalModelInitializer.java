@@ -1,5 +1,7 @@
 package com.architecture.specification.architectural.model;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 
 import com.architecture.specification.library.ArchitecturalModelBuilder;
@@ -159,14 +161,14 @@ public class CustomArchitecturalModelInitializer extends ArchitecturalModelIniti
 	@Override
 	public void initializeModelArchitecturalComponents() throws ComponentNotFoundException, PortInterfaceNotFoundException {
 
-		architecturalModelBuilder.addComponent(SERVER_COMPONENT, null, null, null, null);
+		architecturalModelBuilder.addComponent(SERVER_COMPONENT, null, new ArrayList<String> (Arrays.asList(new String[] {"trial2"})), null, null);
 		architecturalModelBuilder.addComponent(CLIENT_COMPONENT, null, null, null, null);
 
 		HashSet<ProvidedPortInterface> geoLocatorComponentProvidedInterfaces = new HashSet<ProvidedPortInterface>();
 		geoLocatorComponentProvidedInterfaces.add(architecturalModelBuilder.getProvidedPortInterface(
 				IDENTIFY_GEO_LOCATION_USING_IP_ADDRESS_PORT, PortInterfaceCommunicationType.TASK_EXECUTION,
 				PortInterfaceCommunicationSynchronizationType.SYNC));
-		architecturalModelBuilder.addComponent(GEO_LOCATOR_COMPONENT, SERVER_COMPONENT, null,
+		architecturalModelBuilder.addComponent(GEO_LOCATOR_COMPONENT, SERVER_COMPONENT, new ArrayList<String> (Arrays.asList(new String[] {"trial1"})),
 				geoLocatorComponentProvidedInterfaces, null);
 
 		HashSet<ProvidedPortInterface> socialNetworkComponentProvidedInterfaces = new HashSet<ProvidedPortInterface>();

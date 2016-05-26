@@ -46,6 +46,8 @@ public class ArchitecturalModelBuilder implements IArchitecturalModelBuilder {
 
 		initializer.initializeModelConcurrentComponentsMap();
 		refineConcurrentComponentsMap();
+		
+		architecturalModel.getClassComponentsMap();
 	}
 
 	private void refineArchitecturalComponentsHierarchy() {
@@ -184,7 +186,7 @@ public class ArchitecturalModelBuilder implements IArchitecturalModelBuilder {
 	}
 
 	public void addComponent(String componentIdentifier, String parentComponentIdentifier,
-			HashSet<String> componentClasses, HashSet<ProvidedPortInterface> providedInterfaces,
+			ArrayList<String> componentClasses, HashSet<ProvidedPortInterface> providedInterfaces,
 			HashSet<RequiredPortInterface> requiredInterfaces) throws ComponentNotFoundException {
 		HashMap<String, ArchitecturalComponent> componentsIdentifersMap = architecturalModel
 				.getModelComponentsIdentifiersMap();

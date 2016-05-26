@@ -27,7 +27,7 @@ public class JavaADL {
 		architecturalModelBuilder.buildArchitecturalModel(customArchitecturalModelInitializer);
 		System.out.println("Architectural Model Successfully built");
 
-		String sourceFilesDirectory = "D:/Work/TrialWorkspace/CS5001-150023144-practical-04/src";
+		String sourceFilesDirectory = "D:/Work/TrialWorkspace/CS5001-150023144-practical-04/bin";
 		ArchitecturalModelParser modelParser = new ArchitecturalModelParser(sourceFilesDirectory,
 				architecturalModelBuilder.getArchitecturalModel());
 		modelParser.verifyAgainstImplementation();
