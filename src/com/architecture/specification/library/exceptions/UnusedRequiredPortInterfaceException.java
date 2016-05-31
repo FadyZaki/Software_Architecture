@@ -1,7 +1,6 @@
 package com.architecture.specification.library.exceptions;
 
-import com.architecture.specification.library.ArchitecturalComponent;
-import com.architecture.specification.library.RequiredPortInterface;
+import com.architecture.specification.library.architectural.model.component.ArchitecturalComponent;
 
 public class UnusedRequiredPortInterfaceException extends Exception {
 
