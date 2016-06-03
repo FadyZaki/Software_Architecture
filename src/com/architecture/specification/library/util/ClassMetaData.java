@@ -5,29 +5,49 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
+import org.apache.commons.collections4.multimap.HashSetValuedHashMap;
+
+import com.architecture.specification.library.architectural.model.component.ArchitecturalComponent;
+
 public class ClassMetaData {
 
-	private String classFullyQualifiedName;
+	private String fullyQualifiedName;
 	private HashSet<String> providedMethods;
-	private HashSet<String> requiredMethods;
+	private HashSetValuedHashMap<String, String> requiredMethodsCommunicationsMap;
 	
 	public ClassMetaData(String classFullyQualifiedName, HashSet<String> providedMethods,
-			HashSet<String> requiredMethods) {
-		this.classFullyQualifiedName = classFullyQualifiedName;
+			HashSetValuedHashMap<String, String> classMethodsCommunicationsMap) {
+		this.fullyQualifiedName = classFullyQualifiedName;
 		this.providedMethods = providedMethods;
-		this.requiredMethods = requiredMethods;
+		this.requiredMethodsCommunicationsMap = classMethodsCommunicationsMap;
 	}
 	
 	public String getClassFullyQualifiedName() {
-		return classFullyQualifiedName;
+		return fullyQualifiedName;
 	}
 
 	public HashSet<String> getProvidedMethods() {
-		return (HashSet<String>) Collections.unmodifiableSet(providedMethods);
+		return providedMethods;
+	}
+	
+	public HashSetValuedHashMap<String, String> getRequiredMethodsCommunicationsMap() {
+		return requiredMethodsCommunicationsMap;
 	}
 
-	public HashSet<String> getRequiredMethods() {
-		return (HashSet<String>) Collections.unmodifiableSet(requiredMethods);
+	@Override
+	public int hashCode() {
+		return this.fullyQualifiedName.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof ClassMetaData))
+			return false;
+		if (obj == this)
+			return true;
+
+		ClassMetaData cmd = (ClassMetaData) obj;
+		return this.getClassFullyQualifiedName().equals(cmd.getClassFullyQualifiedName());
 	}
 	
 }

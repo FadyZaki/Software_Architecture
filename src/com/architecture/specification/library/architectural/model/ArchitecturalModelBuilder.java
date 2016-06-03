@@ -12,6 +12,7 @@ import java.util.Objects;
 import com.architecture.specification.architectural.model.custom.CustomArchitecturalModelInitializer;
 import com.architecture.specification.library.architectural.model.communication.link.CommunicationLink;
 import com.architecture.specification.library.architectural.model.component.ArchitecturalComponent;
+import com.architecture.specification.library.architectural.model.component.BlackboxArchitecturalComponent;
 import com.architecture.specification.library.architectural.model.portinterface.PortInterface;
 import com.architecture.specification.library.architectural.model.portinterface.PortInterfaceCommunicationSynchronizationType;
 import com.architecture.specification.library.architectural.model.portinterface.PortInterfaceCommunicationType;
@@ -49,11 +50,11 @@ public class ArchitecturalModelBuilder implements IArchitecturalModelBuilder {
 
 		initializer.initializeModelComponentsCommunicationLinks();
 		verifyCommunicationLinksCompatibility();
-		verifyEachComponentIsUsed();
+		//verifyEachComponentIsUsed();
 		verifyEachRequiredPortIsUsed();
 
-		initializer.initializeModelConcurrentComponentsMap();
-		refineConcurrentComponentsMap();
+		//initializer.initializeModelConcurrentComponentsMap();
+		//refineConcurrentComponentsMap();
 		
 		architecturalModel.getClassComponentsMap();
 	}
@@ -195,15 +196,20 @@ public class ArchitecturalModelBuilder implements IArchitecturalModelBuilder {
 
 	public void addComponent(String componentIdentifier, String parentComponentIdentifier,
 			ArrayList<String> componentClasses, HashSet<ProvidedPortInterface> providedInterfaces,
-			HashSet<RequiredPortInterface> requiredInterfaces) throws ComponentNotFoundException {
+			HashSet<RequiredPortInterface> requiredInterfaces, boolean isBlackbox) throws ComponentNotFoundException {
 		HashMap<String, ArchitecturalComponent> componentsIdentifersMap = architecturalModel
 				.getModelComponentsIdentifiersMap();
 		ArchitecturalComponent parentComponent = componentsIdentifersMap.get(parentComponentIdentifier);
 		if (parentComponentIdentifier != null && parentComponent == null)
 			throw new ComponentNotFoundException(parentComponentIdentifier);
 
-		ArchitecturalComponent architecturalComponent = new ArchitecturalComponent(componentIdentifier, parentComponent,
+		ArchitecturalComponent architecturalComponent;
+		if (isBlackbox)
+			architecturalComponent = new BlackboxArchitecturalComponent(componentIdentifier, parentComponent,
 				componentClasses, providedInterfaces, requiredInterfaces);
+		else
+			architecturalComponent = new ArchitecturalComponent(componentIdentifier, parentComponent,
+					componentClasses, providedInterfaces, requiredInterfaces);
 		architecturalModel.getModelComponentsIdentifiersMap().put(architecturalComponent.getComponentIdentifier(),
 				architecturalComponent);
 	}
