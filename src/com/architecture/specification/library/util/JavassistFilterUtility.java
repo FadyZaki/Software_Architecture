@@ -9,7 +9,7 @@ import com.architecture.specification.library.util.methodfilter.JavassistMethodF
 import javassist.CtClass;
 import javassist.CtMethod;
 
-public class JavassistUtilityFilter {
+public class JavassistFilterUtility {
 
 	public static List<CtClass> filterClasses(JavassistClassFilter classFilter, List<CtClass> classesToBeFiltered) {
 
