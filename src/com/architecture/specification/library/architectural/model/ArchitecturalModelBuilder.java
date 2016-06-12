@@ -221,13 +221,13 @@ public class ArchitecturalModelBuilder implements IArchitecturalModelBuilder {
 		if (portInterfaceType == PortInterfaceType.PROVIDED) {
 			ProvidedPortInterface p = new ProvidedPortInterface(portInterfaceIdentifier, portInterfaceCommunicationType,
 					portInterfaceCommunicationSynchronizationType);
-			architecturalModel.getModelProvidedPortInterfacesMap().put(p.getPortInterfaceSignature(), p);
+			architecturalModel.getModelProvidedPortInterfacesMap().put(p.getPortInterfaceIdentifier(), p);
 		}
 
 		if (portInterfaceType == PortInterfaceType.REQUIRED) {
 			RequiredPortInterface r = new RequiredPortInterface(portInterfaceIdentifier, portInterfaceCommunicationType,
 					portInterfaceCommunicationSynchronizationType);
-			architecturalModel.getModelRequiredPortInterfacesMap().put(r.getPortInterfaceSignature(), r);
+			architecturalModel.getModelRequiredPortInterfacesMap().put(r.getPortInterfaceIdentifier(), r);
 		}
 
 	}
@@ -237,13 +237,11 @@ public class ArchitecturalModelBuilder implements IArchitecturalModelBuilder {
 			PortInterfaceCommunicationSynchronizationType portInterfaceCommunicationSynchronizationType)
 					throws PortInterfaceNotFoundException {
 
-		String providedPortInterfaceSignature = PortInterface.constructPortInterfaceSignature(portInterfaceIdentifier,
-				portInterfaceCommunicationType, portInterfaceCommunicationSynchronizationType);
 		ProvidedPortInterface p = architecturalModel.getModelProvidedPortInterfacesMap()
-				.get(providedPortInterfaceSignature);
+				.get(portInterfaceIdentifier);
 
 		if (p == null)
-			throw new PortInterfaceNotFoundException(providedPortInterfaceSignature);
+			throw new PortInterfaceNotFoundException(portInterfaceIdentifier);
 		else
 			return p;
 
@@ -253,13 +251,11 @@ public class ArchitecturalModelBuilder implements IArchitecturalModelBuilder {
 			PortInterfaceCommunicationType portInterfaceCommunicationType,
 			PortInterfaceCommunicationSynchronizationType portInterfaceCommunicationSynchronizationType)
 					throws PortInterfaceNotFoundException {
-		String requiredPortInterfaceSignature = PortInterface.constructPortInterfaceSignature(portInterfaceIdentifier,
-				portInterfaceCommunicationType, portInterfaceCommunicationSynchronizationType);
 		RequiredPortInterface r = architecturalModel.getModelRequiredPortInterfacesMap()
-				.get(requiredPortInterfaceSignature);
+				.get(portInterfaceIdentifier);
 
 		if (r == null)
-			throw new PortInterfaceNotFoundException(requiredPortInterfaceSignature);
+			throw new PortInterfaceNotFoundException(portInterfaceIdentifier);
 		else
 			return r;
 
@@ -292,11 +288,11 @@ public class ArchitecturalModelBuilder implements IArchitecturalModelBuilder {
 		HashMap<String, RequiredPortInterface> requiringComponentPortInterfacesMap = requiringComponent
 				.getRequiredInterfacesMap();
 
-		if (!providingComponentPortInterfacesMap.containsKey(p.getPortInterfaceSignature()))
-			throw new PortInterfaceNotDefinedInComponentException(p.getPortInterfaceSignature(), providingComponent);
+		if (!providingComponentPortInterfacesMap.containsKey(p.getPortInterfaceIdentifier()))
+			throw new PortInterfaceNotDefinedInComponentException(p.getPortInterfaceIdentifier(), providingComponent);
 
-		if (!requiringComponentPortInterfacesMap.containsKey(r.getPortInterfaceSignature()))
-			throw new PortInterfaceNotDefinedInComponentException(r.getPortInterfaceSignature(), requiringComponent);
+		if (!requiringComponentPortInterfacesMap.containsKey(r.getPortInterfaceIdentifier()))
+			throw new PortInterfaceNotDefinedInComponentException(r.getPortInterfaceIdentifier(), requiringComponent);
 
 		ArchitecturalComponent innermostProvidingComponent = null;
 		if (innermostProvidingComponentIdentifier != null) {
@@ -308,8 +304,8 @@ public class ArchitecturalModelBuilder implements IArchitecturalModelBuilder {
 				throw new ComponentNotDescendantOfAnotherException(innermostProvidingComponent.getComponentIdentifier(),
 						providingComponent.getComponentIdentifier());
 
-			if (!innermostProvidingComponent.getProvidedInterfacesMap().containsKey(p.getPortInterfaceSignature()))
-				throw new PortInterfaceNotDefinedInComponentException(p.getPortInterfaceSignature(),
+			if (!innermostProvidingComponent.getProvidedInterfacesMap().containsKey(p.getPortInterfaceIdentifier()))
+				throw new PortInterfaceNotDefinedInComponentException(p.getPortInterfaceIdentifier(),
 						innermostProvidingComponent);
 
 		}

@@ -50,7 +50,7 @@ public class ArchitecturalComponent {
 	public HashMap<String, ProvidedPortInterface> getProvidedInterfacesMap() {
 		HashMap<String, ProvidedPortInterface> providedInterfacesMap = new HashMap<String, ProvidedPortInterface>();
 		for (ProvidedPortInterface ppi : providedInterfaces) {
-			providedInterfacesMap.put(ppi.getPortInterfaceSignature(), ppi);
+			providedInterfacesMap.put(ppi.getPortInterfaceIdentifier(), ppi);
 		}
 		return providedInterfacesMap;
 	}
@@ -66,7 +66,7 @@ public class ArchitecturalComponent {
 	public HashMap<String, RequiredPortInterface> getRequiredInterfacesMap() {
 		HashMap<String, RequiredPortInterface> requiredInterfacesMap = new HashMap<String, RequiredPortInterface>();
 		for (RequiredPortInterface rpi : requiredInterfaces) {
-			requiredInterfacesMap.put(rpi.getPortInterfaceSignature(), rpi);
+			requiredInterfacesMap.put(rpi.getPortInterfaceIdentifier(), rpi);
 		}
 		return requiredInterfacesMap;
 	}

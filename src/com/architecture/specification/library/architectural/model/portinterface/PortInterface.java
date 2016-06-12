@@ -27,23 +27,23 @@ public abstract class PortInterface {
 		return portInterfaceCommunicationSynchronizationType;
 	}
 
-	public String getPortInterfaceSignature() {
-		return portInterfaceIdentifier + HelperConstants.UNDERSCORE_SYMBOL + portInterfaceCommunicationType.toString()
-				+ HelperConstants.UNDERSCORE_SYMBOL + portInterfaceCommunicationSynchronizationType.toString();
-	}
-
-	public static String constructPortInterfaceSignature(String portInterfaceIdentifier,
-			PortInterfaceCommunicationType portInterfaceCommunicationType,
-			PortInterfaceCommunicationSynchronizationType portInterfaceCommunicationSynchronizationType) {
-		return portInterfaceIdentifier + HelperConstants.UNDERSCORE_SYMBOL + portInterfaceCommunicationType.toString()
-				+ HelperConstants.UNDERSCORE_SYMBOL + portInterfaceCommunicationSynchronizationType.toString();
-	}
+//	public String getPortInterfaceSignature() {
+//		return portInterfaceIdentifier + HelperConstants.UNDERSCORE_SYMBOL + portInterfaceCommunicationType.toString()
+//				+ HelperConstants.UNDERSCORE_SYMBOL + portInterfaceCommunicationSynchronizationType.toString();
+//	}
+//
+//	public static String constructPortInterfaceSignature(String portInterfaceIdentifier,
+//			PortInterfaceCommunicationType portInterfaceCommunicationType,
+//			PortInterfaceCommunicationSynchronizationType portInterfaceCommunicationSynchronizationType) {
+//		return portInterfaceIdentifier + HelperConstants.UNDERSCORE_SYMBOL + portInterfaceCommunicationType.toString()
+//				+ HelperConstants.UNDERSCORE_SYMBOL + portInterfaceCommunicationSynchronizationType.toString();
+//	}
 
 	public abstract PortInterfaceType getPortInterfaceType();
 
 	@Override
 	public int hashCode() {
-		return (getPortInterfaceSignature() + HelperConstants.UNDERSCORE_SYMBOL + getPortInterfaceType()).hashCode();
+		return getPortInterfaceIdentifier().hashCode();
 	}
 
 	@Override
@@ -54,8 +54,7 @@ public abstract class PortInterface {
 			return true;
 
 		PortInterface rhs = (PortInterface) obj;
-		return (this.getPortInterfaceSignature().equals(rhs.getPortInterfaceSignature())
-				&& this.getPortInterfaceType() == rhs.getPortInterfaceType());
+		return (this.getPortInterfaceIdentifier().equals(rhs.getPortInterfaceIdentifier()));
 	}
 
 }

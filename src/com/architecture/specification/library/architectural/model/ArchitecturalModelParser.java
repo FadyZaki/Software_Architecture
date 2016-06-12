@@ -328,7 +328,7 @@ public class ArchitecturalModelParser {
 					intendedComponentProvidedMethods.addAll(verifyProvidedSharedData(implementedArchitecturalComponent, p));
 					break;
 				case MESSAGE_PASSING:
-					intendedComponentProvidedMethods.addAll(verifyProvidedMessagePassing(implementedArchitecturalComponent, p));
+					verifyProvidedMessagePassing(implementedArchitecturalComponent, p);
 					break;
 				default:
 					break;
@@ -336,8 +336,8 @@ public class ArchitecturalModelParser {
 
 			}
 
-			SetView<MethodDeclarationMetaData> availableMethodsNotIntended = SetUtils.difference(new HashSet<>(componentProvidedMethods.values()),
-					intendedComponentProvidedMethods);
+			SetView<MethodDeclarationMetaData> availableMethodsNotIntended = SetUtils
+					.difference(new HashSet<MethodDeclarationMetaData>(componentProvidedMethods.values()), intendedComponentProvidedMethods);
 			if (!availableMethodsNotIntended.isEmpty())
 				throw new VerificationException(
 						"These public methods are available in the implementation but are never defined as part of the architecture specification"
@@ -359,37 +359,52 @@ public class ArchitecturalModelParser {
 					break;
 				}
 			}
-		}
 
-		// Consistency checking of communication links specified in the
-		// architectural model being fulfilled by the implementation code
-		for (CommunicationLink communicationLink : intendedArchitecturalModel.getCommunicationLinks()) {
-			ArchitecturalComponentImplementationMetaData providingComponent;
-			ArchitecturalComponentImplementationMetaData requiringComponent;
-			if(communicationLink.getInnermostProvidingComponent() != null)
-				providingComponent = implementedArchitecturalModel.getActualImplementedComponents().get(communicationLink.getInnermostProvidingComponent());
-			else
-				providingComponent = implementedArchitecturalModel.getActualImplementedComponents().get(communicationLink.getProvidingComponent());
-			
-			requiringComponent = implementedArchitecturalModel.getActualImplementedComponents().get(communicationLink.getRequiringComponent());
-			
-//			switch (communicationLink.getRequiredPortInterface().getPortInterfaceCommunicationType()) {
-//			case TASK_EXECUTION:
-//				verifyRequiredTaskExecution(implementedArchitecturalComponent, r);
-//				break;
-//			case SHARED_DATA:
-//				verifyRequiredSharedData(implementedArchitecturalComponent, r);
-//				break;
-//			case MESSAGE_PASSING:
-//				verifyRequiredMessagePassing(implementedArchitecturalComponent, r);
-//				break;
-//			default:
-//				break;
-//			}
+			// Consistency checking of communication links specified in the
+			// architectural model being fulfilled by the implementation code
+			Set<MethodCallMetaData> intendedComponentCommunicationLinksMethodCalls = new HashSet<MethodCallMetaData>();
+			for (CommunicationLink communicationLink : intendedArchitecturalModel.getRequiringComponentCommunicationLinksMap().get(architecturalComponent)) {
+				ArchitecturalComponentImplementationMetaData providingComponent;
+				ArchitecturalComponentImplementationMetaData requiringComponent;
+				if (communicationLink.getInnermostProvidingComponent() != null)
+					providingComponent = implementedArchitecturalModel.getActualImplementedComponents()
+							.get(communicationLink.getInnermostProvidingComponent().getComponentIdentifier());
+				else
+					providingComponent = implementedArchitecturalModel.getActualImplementedComponents()
+							.get(communicationLink.getProvidingComponent().getComponentIdentifier());
+
+				requiringComponent = implementedArchitecturalModel.getActualImplementedComponents()
+						.get(communicationLink.getRequiringComponent().getComponentIdentifier());
+
+				RequiredPortInterface requiredPortInterface = communicationLink.getRequiredPortInterface();
+				switch (requiredPortInterface.getPortInterfaceCommunicationType()) {
+				case TASK_EXECUTION:
+					intendedComponentCommunicationLinksMethodCalls
+							.addAll(verifyTaskExecutionCommunicationLink(providingComponent, requiringComponent, requiredPortInterface));
+					break;
+				case SHARED_DATA:
+					intendedComponentCommunicationLinksMethodCalls
+							.addAll(verifySharedDataCommunicationLink(providingComponent, requiringComponent, requiredPortInterface));
+					break;
+				case MESSAGE_PASSING:
+					verifyMessagePassingCommunicationLink(providingComponent, requiringComponent, requiredPortInterface);
+					break;
+				default:
+					break;
+				}
+			}
+
+			// Check for method calls that are not intended
+			Set<MethodCallMetaData> methodCallsNotIntended = SetUtils.difference(new HashSet<MethodCallMetaData>(componentRequiredMethods.values()),
+					intendedComponentCommunicationLinksMethodCalls);
+			if (!methodCallsNotIntended.isEmpty())
+				throw new VerificationException(
+						"These methods are called in the implementation but are never defined as part of the architecture specification\n"
+								+ methodCallsNotIntended);
 		}
 
 	}
-	
+
 	private Set<MethodDeclarationMetaData> verifyProvidedTaskExecution(ArchitecturalComponentImplementationMetaData implementedArchitecturalComponent,
 			ProvidedPortInterface p) throws VerificationException {
 		Set<MethodDeclarationMetaData> providedMethodsUsedByThisTaskExecutionPort = new HashSet<MethodDeclarationMetaData>();
@@ -400,15 +415,17 @@ public class ArchitecturalModelParser {
 		Set<MethodDeclarationMetaData> providedPortActualMethods = implementedArchitecturalComponent.getComponentProvidedMethods()
 				.get(p.getPortInterfaceIdentifier());
 		if (p.getPortInterfaceCommunicationSynchronizationType() == PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_CALLBACK) {
-			boolean methodWithFutureReturnTypeIsAvailable = false;
+			boolean methodWithFutureReturnTypeIsNotProperlyDeclared = false;
 			for (MethodDeclarationMetaData mmd : providedPortActualMethods) {
 				if (mmd.getMethodReturnType().equals("java.util.concurrent.Future")) {
-					methodWithFutureReturnTypeIsAvailable = true;
 					providedMethodsUsedByThisTaskExecutionPort.add(mmd);
+				} else {
+					methodWithFutureReturnTypeIsNotProperlyDeclared = true;
+					break;
 				}
 			}
 
-			if (!methodWithFutureReturnTypeIsAvailable)
+			if (methodWithFutureReturnTypeIsNotProperlyDeclared)
 				throw new VerificationException("The intended 'Asynchronous Task Execution' port provided by "
 						+ implementedArchitecturalComponent.getComponentIdentifier() + " is not part of the implementation!");
 		} else {
@@ -418,7 +435,7 @@ public class ArchitecturalModelParser {
 		return providedMethodsUsedByThisTaskExecutionPort;
 
 	}
-	
+
 	private void verifyRequiredTaskExecution(ArchitecturalComponentImplementationMetaData implementedArchitecturalComponent, RequiredPortInterface r)
 			throws VerificationException {
 		if (!implementedArchitecturalComponent.getComponentRequiredMethodsMap().containsKey(r.getPortInterfaceIdentifier()))
@@ -428,25 +445,47 @@ public class ArchitecturalModelParser {
 		Set<MethodCallMetaData> requiredPortActualMethods = implementedArchitecturalComponent.getComponentRequiredMethodsMap()
 				.get(r.getPortInterfaceIdentifier());
 		if (r.getPortInterfaceCommunicationSynchronizationType() == PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_CALLBACK) {
-			boolean methodWithFutureReturnTypeIsProperlyCalled = true;
+			boolean methodWithFutureReturnTypeIsNotProperlyCalled = false;
 			for (MethodCallMetaData mmd : requiredPortActualMethods) {
 				if (!mmd.getMethodReturnType().equals("java.util.concurrent.Future")) {
-					methodWithFutureReturnTypeIsProperlyCalled = false;
+					methodWithFutureReturnTypeIsNotProperlyCalled = true;
 					break;
 				}
 				if (!recursiveCheckForMethodCallWithinMethodDeclaration(mmd.getCallerMethod(), "get", "java.util.concurrent.Future",
 						implementedArchitecturalComponent.getComponentDeclaredMethods())) {
-					methodWithFutureReturnTypeIsProperlyCalled = false;
+					methodWithFutureReturnTypeIsNotProperlyCalled = true;
 					break;
 				}
 			}
 
-			if (!methodWithFutureReturnTypeIsProperlyCalled)
+			if (methodWithFutureReturnTypeIsNotProperlyCalled)
 				throw new VerificationException("The intended 'Asynchronous Task Execution' port provided by "
 						+ implementedArchitecturalComponent.getComponentIdentifier() + " is not part of the implementation!");
 		}
 	}
-	
+
+	private Set<MethodCallMetaData> verifyTaskExecutionCommunicationLink(ArchitecturalComponentImplementationMetaData providingComponent,
+			ArchitecturalComponentImplementationMetaData requiringComponent, PortInterface portInterface) throws VerificationException {
+		Set<MethodCallMetaData> methodCallsUsedByThisCommunicationLinkTaskExecution = new HashSet<MethodCallMetaData>();
+		Set<MethodCallMetaData> requiredPortActualMethodCalls = requiringComponent.getComponentRequiredMethodsMap()
+				.get(portInterface.getPortInterfaceIdentifier());
+
+		boolean communicationLinkTaskExecutionIsFulfilled = false;
+		for (MethodCallMetaData methodCall : requiredPortActualMethodCalls) {
+			if (providingComponent.getComponentImplementedClasses().containsKey(methodCall.getMethodDeclaringClass())) {
+				communicationLinkTaskExecutionIsFulfilled = true;
+				methodCallsUsedByThisCommunicationLinkTaskExecution.add(methodCall);
+			}
+		}
+
+		if (!communicationLinkTaskExecutionIsFulfilled)
+			throw new VerificationException(
+					"The intended 'Task Execution' communication link between the provider " + providingComponent.getComponentIdentifier()
+							+ " and the requirer " + requiringComponent.getComponentIdentifier() + " is not completely fulfilled by the implementation!");
+
+		return methodCallsUsedByThisCommunicationLinkTaskExecution;
+	}
+
 	private Set<MethodDeclarationMetaData> verifyProvidedSharedData(ArchitecturalComponentImplementationMetaData implementedArchitecturalComponent,
 			ProvidedPortInterface p) throws VerificationException {
 		Set<MethodDeclarationMetaData> providedMethodsUsedByThisSharedDataPort = new HashSet<MethodDeclarationMetaData>();
@@ -475,7 +514,7 @@ public class ArchitecturalModelParser {
 		return providedMethodsUsedByThisSharedDataPort;
 
 	}
-	
+
 	private void verifyRequiredSharedData(ArchitecturalComponentImplementationMetaData implementedArchitecturalComponent, RequiredPortInterface r)
 			throws VerificationException {
 		String sharedVariable = r.getPortInterfaceIdentifier();
@@ -516,19 +555,80 @@ public class ArchitecturalModelParser {
 		}
 
 	}
-	
-	private Set<MethodDeclarationMetaData> verifyProvidedMessagePassing(ArchitecturalComponentImplementationMetaData implementedArchitecturalComponent,
-			ProvidedPortInterface providedPortInterface) throws VerificationException {
-		return verifyMessagePassing(implementedArchitecturalComponent, providedPortInterface);
+
+	private Set<MethodCallMetaData> verifySharedDataCommunicationLink(ArchitecturalComponentImplementationMetaData providingComponent,
+			ArchitecturalComponentImplementationMetaData requiringComponent, PortInterface portInterface) throws VerificationException {
+		Set<MethodCallMetaData> methodCallsUsedByThisSharedDataCommunicationLink = new HashSet<MethodCallMetaData>();
+
+		Set<MethodCallMetaData> requiredPortActualMethodCalls = new HashSet<MethodCallMetaData>();
+		String sharedVariable = portInterface.getPortInterfaceIdentifier();
+		String getterMethod = constructMethodFromVariable("get", sharedVariable);
+		String setterMethod = constructMethodFromVariable("set", sharedVariable);
+		requiredPortActualMethodCalls.addAll(requiringComponent.getComponentRequiredMethodsMap().get(getterMethod));
+		requiredPortActualMethodCalls.addAll(requiringComponent.getComponentRequiredMethodsMap().get(setterMethod));
+
+		boolean sharedDataCommunicationLinkIsFulfilled = false;
+		for (MethodCallMetaData methodCall : requiredPortActualMethodCalls) {
+			if (providingComponent.getComponentImplementedClasses().containsKey(methodCall.getMethodDeclaringClass())) {
+				sharedDataCommunicationLinkIsFulfilled = true;
+				methodCallsUsedByThisSharedDataCommunicationLink.add(methodCall);
+			}
+		}
+
+		//Each class for each setter method in the providing component has to be observed by the requiring component
+		if (portInterface.getPortInterfaceCommunicationSynchronizationType() != PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_NO_CALLBACK) {
+			HashSet<String> observableClasses = new HashSet<String>();
+			HashSet<String> observedClasses = new HashSet<String>();
+			for (MethodDeclarationMetaData methodDeclaration : providingComponent.getComponentProvidedMethods().get(setterMethod)) {
+				observableClasses.add(methodDeclaration.getMethodDeclaringClass());
+			}
+
+			if (requiringComponent.getComponentRequiredMethodsMap().containsKey("addObserver")) {
+				for (MethodCallMetaData methodCall : requiringComponent.getComponentRequiredMethodsMap().get("addObserver")) {
+					if (methodCall.getMethodReturnType().equals("void") && methodCall.getMethodParameterTypes().size() == 1) {
+						if (providingComponent.getComponentImplementedClasses().containsKey(methodCall.getMethodDeclaringClass())
+								&& providingComponent.getComponentImplementedClasses().get(methodCall.getMethodDeclaringClass()).getSuperClasses()
+										.contains("java.util.Observable")) {
+							if (requiringComponent.getComponentImplementedClasses().containsKey(methodCall.getMethodParameterTypes().get(0))) {
+								if (requiringComponent.getComponentImplementedClasses().get(methodCall.getMethodParameterTypes().get(0))
+										.getImplementedInterfaces().contains("java.util.Observer")) {
+									observedClasses.add(methodCall.getMethodDeclaringClass());
+									methodCallsUsedByThisSharedDataCommunicationLink.add(methodCall);
+								}
+							}
+
+						}
+					}
+
+				}
+			}
+			
+			if (!observableClasses.equals(observedClasses))
+				sharedDataCommunicationLinkIsFulfilled = false;
+		}
+		
+		
+
+		if (!sharedDataCommunicationLinkIsFulfilled)
+			throw new VerificationException("The intended 'Shared Data' communication link between the provider " + providingComponent.getComponentIdentifier()
+					+ " and the requirer " + requiringComponent.getComponentIdentifier() + " is not completely fulfilled by the implementation!");
+
+		return methodCallsUsedByThisSharedDataCommunicationLink;
+
 	}
 
-	private void verifyRequiredMessagePassing(ArchitecturalComponentImplementationMetaData implementedArchitecturalComponent, RequiredPortInterface requiredPortInterface) throws VerificationException {
+	private void verifyProvidedMessagePassing(ArchitecturalComponentImplementationMetaData implementedArchitecturalComponent,
+			ProvidedPortInterface providedPortInterface) throws VerificationException {
+		verifyMessagePassing(implementedArchitecturalComponent, providedPortInterface);
+	}
+
+	private void verifyRequiredMessagePassing(ArchitecturalComponentImplementationMetaData implementedArchitecturalComponent,
+			RequiredPortInterface requiredPortInterface) throws VerificationException {
 		verifyMessagePassing(implementedArchitecturalComponent, requiredPortInterface);
 	}
-	
 
-	private Set<MethodDeclarationMetaData> verifyMessagePassing(ArchitecturalComponentImplementationMetaData implementedArchitecturalComponent, PortInterface portInterface) throws VerificationException {
-		Set<MethodDeclarationMetaData> methodsUsedByThisMessagePassingPort = new HashSet<MethodDeclarationMetaData>();
+	private void verifyMessagePassing(ArchitecturalComponentImplementationMetaData implementedArchitecturalComponent, PortInterface portInterface)
+			throws VerificationException {
 		HashSetValuedHashMap<String, MethodDeclarationMetaData> componentDeclaredMehods = implementedArchitecturalComponent.getComponentDeclaredMethods();
 		// check communication wire is accessed through getters and setters
 		// (don't have to be public)
@@ -570,7 +670,6 @@ public class ArchitecturalModelParser {
 				for (MethodDeclarationMetaData getterMethodUsed : getterMethodsUsed) {
 					if (recursiveCheckForMethodCallWithinMethodDeclaration(sendMessageMethod, getterMethodUsed.getMethodIdentifier(),
 							getterMethodUsed.getMethodDeclaringClass(), componentDeclaredMehods)) {
-						methodsUsedByThisMessagePassingPort.add(sendMessageMethod);
 						continue outerloop;
 					}
 				}
@@ -583,15 +682,14 @@ public class ArchitecturalModelParser {
 
 		// Throw exception only if the sendMessage method is not properly set
 		// and the communication type is not ASYNC_WITH_NO_CALLBACK
-		if (!isProperSendMessageMethod
-				&& (portInterface.getPortInterfaceType().equals(PortInterfaceType.REQUIRED)))
-				throw new VerificationException("The intended 'Message Passing' port " + portInterface.getPortInterfaceIdentifier() + " required by " + implementedArchitecturalComponent.getComponentIdentifier()
-				+ " doesn't have a proper sendMessageMethod as part of the implementation!");
-		
+		if (!isProperSendMessageMethod && (portInterface.getPortInterfaceType().equals(PortInterfaceType.REQUIRED)))
+			throw new VerificationException("The intended 'Message Passing' port " + portInterface.getPortInterfaceIdentifier() + " required by "
+					+ implementedArchitecturalComponent.getComponentIdentifier() + " doesn't have a proper sendMessageMethod as part of the implementation!");
+
 		if (!isProperSendMessageMethod
 				&& portInterface.getPortInterfaceCommunicationSynchronizationType() != PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_NO_CALLBACK)
-			throw new VerificationException("The intended 'Message Passing' port  " + portInterface.getPortInterfaceIdentifier() + " provided by " + implementedArchitecturalComponent.getComponentIdentifier()
-					+ " doesn't have a proper sendMessageMethod as part of the implementation!");
+			throw new VerificationException("The intended 'Message Passing' port  " + portInterface.getPortInterfaceIdentifier() + " provided by "
+					+ implementedArchitecturalComponent.getComponentIdentifier() + " doesn't have a proper sendMessageMethod as part of the implementation!");
 
 		// check that each receiveMessageMethod calls the getter method for the
 		// communication wire
@@ -603,7 +701,6 @@ public class ArchitecturalModelParser {
 				for (MethodDeclarationMetaData getterMethodUsed : getterMethodsUsed) {
 					if (recursiveCheckForMethodCallWithinMethodDeclaration(receiveMessageMethod, getterMethodUsed.getMethodIdentifier(),
 							getterMethodUsed.getMethodDeclaringClass(), componentDeclaredMehods)) {
-						methodsUsedByThisMessagePassingPort.add(receiveMessageMethod);
 						continue outerloop;
 					}
 				}
@@ -615,33 +712,70 @@ public class ArchitecturalModelParser {
 		}
 
 		if (!isProperReceiveMessageMethod && portInterface.getPortInterfaceType().equals(PortInterfaceType.PROVIDED))
-			throw new VerificationException("The intended 'Message Passing' port " + portInterface.getPortInterfaceIdentifier() + " provided by " + implementedArchitecturalComponent.getComponentIdentifier()
-					+ " doesn't have a proper receiveMessageMethod as part of the implementation!");
-		
-		if (!isProperReceiveMessageMethod
-				&& portInterface.getPortInterfaceCommunicationSynchronizationType() != PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_NO_CALLBACK)
-			throw new VerificationException("The intended 'Message Passing' port " + portInterface.getPortInterfaceIdentifier() + " required by " + implementedArchitecturalComponent.getComponentIdentifier()
+			throw new VerificationException("The intended 'Message Passing' port " + portInterface.getPortInterfaceIdentifier() + " provided by "
+					+ implementedArchitecturalComponent.getComponentIdentifier()
 					+ " doesn't have a proper receiveMessageMethod as part of the implementation!");
 
-		return SetUtils.intersection(methodsUsedByThisMessagePassingPort, new HashSet<>(componentDeclaredMehods.values()));
+		if (!isProperReceiveMessageMethod
+				&& portInterface.getPortInterfaceCommunicationSynchronizationType() != PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_NO_CALLBACK)
+			throw new VerificationException("The intended 'Message Passing' port " + portInterface.getPortInterfaceIdentifier() + " required by "
+					+ implementedArchitecturalComponent.getComponentIdentifier()
+					+ " doesn't have a proper receiveMessageMethod as part of the implementation!");
 
 	}
 
+	private void verifyMessagePassingCommunicationLink(ArchitecturalComponentImplementationMetaData providingComponent,
+			ArchitecturalComponentImplementationMetaData requiringComponent, PortInterface portInterface) throws VerificationException {
+		Set<MethodCallMetaData> requiredPortActualMethodCalls = requiringComponent.getComponentRequiredMethodsMap()
+				.get(portInterface.getPortInterfaceIdentifier());
+
+		String communicationWire = portInterface.getPortInterfaceIdentifier();
+		String sendMessageThroughCommunicationWireMethod = constructMethodFromVariable("sendMessageThrough", communicationWire);
+		String receiveMessageThroughCommunicationWireMethod = constructMethodFromVariable("receiveMessageThrough", communicationWire);
+
+		boolean messagePassingCommunicationLinkIsFulfilled = true;
+		if (!requiringComponent.getComponentRequiredMethodsMap().containsKey(sendMessageThroughCommunicationWireMethod))
+			messagePassingCommunicationLinkIsFulfilled = false;
+		if (portInterface.getPortInterfaceCommunicationSynchronizationType() != PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_NO_CALLBACK
+				&& !requiringComponent.getComponentRequiredMethodsMap().containsKey(receiveMessageThroughCommunicationWireMethod))
+			messagePassingCommunicationLinkIsFulfilled = false;
+
+		if (!providingComponent.getComponentRequiredMethodsMap().containsKey(receiveMessageThroughCommunicationWireMethod))
+			messagePassingCommunicationLinkIsFulfilled = false;
+		if (portInterface.getPortInterfaceCommunicationSynchronizationType() != PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_NO_CALLBACK
+				&& !requiringComponent.getComponentRequiredMethodsMap().containsKey(sendMessageThroughCommunicationWireMethod))
+			messagePassingCommunicationLinkIsFulfilled = false;
+
+		if (!messagePassingCommunicationLinkIsFulfilled)
+			throw new VerificationException(
+					"The intended 'Message Passing' communication link between the provider " + providingComponent.getComponentIdentifier()
+							+ " and the requirer " + requiringComponent.getComponentIdentifier() + " is not completely fulfilled by the implementation!");
+
+	}
 
 	private Set<MethodDeclarationMetaData> verifyGetterMethodConsistency(String componentIdentifier, String variable,
 			HashSetValuedHashMap<String, MethodDeclarationMetaData> methodsUnderInvestigation) throws VerificationException {
 		Set<MethodDeclarationMetaData> getterMethodsUsed = new HashSet<MethodDeclarationMetaData>();
 		String getterMethod = constructMethodFromVariable("get", variable);
-		boolean isProperGetterMethod = false;
+		boolean isNotProperGetterMethod = false;
 		if (methodsUnderInvestigation.containsKey(getterMethod)) {
 			for (MethodDeclarationMetaData methodDeclaration : methodsUnderInvestigation.get(getterMethod)) {
-				if (methodDeclaration.getFieldAccessMap().get(variable).isRead()) {
-					isProperGetterMethod = true;
-					getterMethodsUsed.add(methodDeclaration);
+				if (methodDeclaration.getFieldAccessMap().containsKey(variable)) {
+					if (methodDeclaration.getFieldAccessMap().get(variable).isRead()) {
+						getterMethodsUsed.add(methodDeclaration);
+					} else {
+						isNotProperGetterMethod = true;
+						break;
+					}
+				} else {
+					isNotProperGetterMethod = true;
+					break;
 				}
 			}
+		} else {
+			isNotProperGetterMethod = true;
 		}
-		if (!isProperGetterMethod)
+		if (isNotProperGetterMethod)
 			throw new VerificationException(
 					"The intended 'Shared Data' port provided by " + componentIdentifier + " has no Getter method as part of the implementation!");
 
@@ -654,16 +788,25 @@ public class ArchitecturalModelParser {
 		Set<MethodDeclarationMetaData> setterMethodsUsed = new HashSet<MethodDeclarationMetaData>();
 
 		String setterMethod = constructMethodFromVariable("set", variable);
-		boolean isProperSetterMethod = false;
+		boolean isNotProperSetterMethod = false;
 		if (methodsUnderInvestigation.containsKey(setterMethod)) {
 			for (MethodDeclarationMetaData methodDeclaration : methodsUnderInvestigation.get(setterMethod)) {
-				if (methodDeclaration.getFieldAccessMap().get(variable).isWritten()) {
-					isProperSetterMethod = true;
-					setterMethodsUsed.add(methodDeclaration);
+				if (methodDeclaration.getFieldAccessMap().containsKey(variable)) {
+					if (methodDeclaration.getFieldAccessMap().get(variable).isWritten()) {
+						setterMethodsUsed.add(methodDeclaration);
+					} else {
+						isNotProperSetterMethod = true;
+						break;
+					}
+				} else {
+					isNotProperSetterMethod = true;
+					break;
 				}
 			}
+		} else {
+			isNotProperSetterMethod = true;
 		}
-		if (!isProperSetterMethod)
+		if (isNotProperSetterMethod)
 			throw new VerificationException(
 					"The intended 'Shared Data' port provided by " + componentIdentifier + " has no Setter method as part of the implementation!");
 

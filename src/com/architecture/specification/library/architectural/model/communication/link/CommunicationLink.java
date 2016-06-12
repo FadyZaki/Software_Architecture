@@ -36,8 +36,16 @@ public class CommunicationLink {
 	public ProvidedPortInterface getProvidedPortInterface() {
 		return providedPortInterface;
 	}
+	
+	public ProvidedPortInterface getPortInterfaceAsProvided() {
+		return providedPortInterface;
+	}
 
 	public RequiredPortInterface getRequiredPortInterface() {
+		return requiredPortInterface;
+	}
+	
+	public RequiredPortInterface getPortInterfaceAsRequired() {
 		return requiredPortInterface;
 	}
 	

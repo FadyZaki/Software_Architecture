@@ -5,6 +5,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.collections4.multimap.HashSetValuedHashMap;
+
 import com.architecture.specification.library.architectural.model.communication.link.CommunicationLink;
 import com.architecture.specification.library.architectural.model.component.ArchitecturalComponent;
 import com.architecture.specification.library.architectural.model.portinterface.ProvidedPortInterface;
@@ -62,16 +64,12 @@ public class ArchitecturalModel {
 		return requiredPortInterfacesComponentsMap;
 	}
 
-	// NOT_USED
-	public HashMap<RequiredPortInterface, Integer> getRequiredPortInterfacesCommunicationLinksCountMap() {
-		HashMap<RequiredPortInterface, Integer> requiredPortInterfacesCommunicationLinksCountMap = new HashMap<RequiredPortInterface, Integer>();
+	public HashSetValuedHashMap<ArchitecturalComponent, CommunicationLink> getRequiringComponentCommunicationLinksMap() {
+		HashSetValuedHashMap<ArchitecturalComponent, CommunicationLink> requiredPortInterfacesCommunicationLinksMap = new HashSetValuedHashMap<ArchitecturalComponent, CommunicationLink>();
 		for (CommunicationLink c : communicationLinks) {
-			int count = requiredPortInterfacesCommunicationLinksCountMap.containsKey(c.getRequiredPortInterface())
-					? requiredPortInterfacesCommunicationLinksCountMap.get(c.getRequiredPortInterface()) : 0;
-			requiredPortInterfacesCommunicationLinksCountMap.put(c.getRequiredPortInterface(), ++count);
+			requiredPortInterfacesCommunicationLinksMap.put(c.getRequiringComponent(), c);
 		}
-
-		return requiredPortInterfacesCommunicationLinksCountMap;
+		return requiredPortInterfacesCommunicationLinksMap;
 	}
 
 	public HashMap<String, HashSet<ArchitecturalComponent>> getClassComponentsMap() {
@@ -80,8 +78,8 @@ public class ArchitecturalModel {
 			for (String classFullName :c.getComponentClasses()) {
 				HashSet<ArchitecturalComponent> classComponents = classComponentsMap
 						.containsKey(classFullName)
-								? classComponentsMap.get(classFullName)
-								: new HashSet<ArchitecturalComponent>();
+ ? classComponentsMap.get(classFullName)
+						: new HashSet<ArchitecturalComponent>();
 				classComponents.add(c);
 				classComponentsMap.put(classFullName, classComponents);
 			}
