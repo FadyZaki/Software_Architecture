@@ -1,7 +1,9 @@
 package com.architecture.specification.library.architectural.model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -9,25 +11,38 @@ import org.apache.commons.collections4.multimap.HashSetValuedHashMap;
 
 import com.architecture.specification.library.architectural.model.communication.link.CommunicationLink;
 import com.architecture.specification.library.architectural.model.component.ArchitecturalComponent;
+import com.architecture.specification.library.architectural.model.constraint.model.IArchitecturalModelConstraint;
 import com.architecture.specification.library.architectural.model.portinterface.ProvidedPortInterface;
 import com.architecture.specification.library.architectural.model.portinterface.RequiredPortInterface;
+import com.architecture.specification.library.architectural.style.ArchitecturalStyle;
 import com.architecture.specification.library.exceptions.IncompatiblePortInterfacesException;
 
 public class ArchitecturalModel {
 
+	private String modelIdentifier;
 	private HashMap<String, ArchitecturalComponent> modelComponentsIdentifiersMap;
 	private HashSet<CommunicationLink> communicationLinks;
-	private HashMap<ArchitecturalComponent, HashSet<ArchitecturalComponent>> concurrentComponentsMap;
 
 	private HashMap<String, ProvidedPortInterface> modelProvidedPortInterfacesMap;
 	private HashMap<String, RequiredPortInterface> modelRequiredPortInterfacesMap;
+	
+	private List<IArchitecturalModelConstraint> modelConstraints;
+	private List<ArchitecturalStyle> modelCompliantStyles;
 
-	public ArchitecturalModel() {
+
+	public ArchitecturalModel(String modelIdentifier) {
+		this.modelIdentifier = modelIdentifier;
 		modelComponentsIdentifiersMap = new HashMap<String, ArchitecturalComponent>();
 		communicationLinks = new HashSet<CommunicationLink>();
-		concurrentComponentsMap = new HashMap<ArchitecturalComponent, HashSet<ArchitecturalComponent>>();
 		modelProvidedPortInterfacesMap = new HashMap<String, ProvidedPortInterface>();
 		modelRequiredPortInterfacesMap = new HashMap<String, RequiredPortInterface>();
+		modelConstraints = new ArrayList<IArchitecturalModelConstraint>();
+		modelCompliantStyles = new ArrayList<ArchitecturalStyle>();
+	}
+
+	
+	public String getModelIdentifier() {
+		return modelIdentifier;
 	}
 
 	public HashMap<String, ArchitecturalComponent> getModelComponentsIdentifiersMap() {
@@ -38,10 +53,6 @@ public class ArchitecturalModel {
 		return communicationLinks;
 	}
 
-	public HashMap<ArchitecturalComponent, HashSet<ArchitecturalComponent>> getConcurrentComponentsMap() {
-		return concurrentComponentsMap;
-	}
-
 	public HashMap<String, ProvidedPortInterface> getModelProvidedPortInterfacesMap() {
 		return modelProvidedPortInterfacesMap;
 	}
@@ -49,6 +60,15 @@ public class ArchitecturalModel {
 	public HashMap<String, RequiredPortInterface> getModelRequiredPortInterfacesMap() {
 		return modelRequiredPortInterfacesMap;
 	}
+	
+	public List<IArchitecturalModelConstraint> getModelConstraints() {
+		return modelConstraints;
+	}
+
+	public List<ArchitecturalStyle> getModelCompliantStyles() {
+		return modelCompliantStyles;
+	}
+
 
 	public HashMap<RequiredPortInterface, HashSet<ArchitecturalComponent>> getUsedRequiredPortInterfacesComponentsMap() {
 		HashMap<RequiredPortInterface, HashSet<ArchitecturalComponent>> requiredPortInterfacesComponentsMap = new HashMap<RequiredPortInterface, HashSet<ArchitecturalComponent>>();

@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import com.architecture.specification.library.architectural.model.constraint.component.ArchitecturalComponentConstraint;
 import com.architecture.specification.library.architectural.model.portinterface.ProvidedPortInterface;
 import com.architecture.specification.library.architectural.model.portinterface.RequiredPortInterface;
+import com.architecture.specification.library.architectural.style.component.type.ArchitecturalComponentType;
 
 public class ArchitecturalComponent {
 
@@ -15,16 +17,22 @@ public class ArchitecturalComponent {
 	private ArrayList<String> componentClasses;
 	private HashSet<ProvidedPortInterface> providedInterfaces;
 	private HashSet<RequiredPortInterface> requiredInterfaces;
+	private HashSet<ArchitecturalComponentType> componentTypes;
+	private ArrayList<ArchitecturalComponentConstraint> componentConstraints;
 
 	public ArchitecturalComponent(String componentIdentifier, ArchitecturalComponent parentComponent,
 			ArrayList<String> componentClasses, HashSet<ProvidedPortInterface> providedInterfaces,
-			HashSet<RequiredPortInterface> requiredInterfaces) {
+			HashSet<RequiredPortInterface> requiredInterfaces, HashSet<ArchitecturalComponentType> componentTypes, ArrayList<ArchitecturalComponentConstraint> componentConstraints) {
 		this.componentIdentifier = componentIdentifier;
 		this.parentComponent = parentComponent;
 		this.childrenComponents = new HashSet<ArchitecturalComponent>();
 		this.componentClasses = componentClasses != null ? componentClasses : new ArrayList<String>();
 		this.providedInterfaces = providedInterfaces != null ? providedInterfaces : new HashSet<ProvidedPortInterface>();
 		this.requiredInterfaces = requiredInterfaces != null ? requiredInterfaces : new HashSet<RequiredPortInterface>();
+		this.componentTypes = componentTypes != null ? componentTypes : new HashSet<ArchitecturalComponentType>();
+		this.componentConstraints = componentConstraints != null ? componentConstraints : new ArrayList<ArchitecturalComponentConstraint>();
+		for (ArchitecturalComponentType componentType : componentTypes)
+			componentConstraints.addAll(componentType.getComponentTypeConstraints());
 	}
 
 	public String getComponentIdentifier() {
@@ -57,6 +65,14 @@ public class ArchitecturalComponent {
 
 	public HashSet<RequiredPortInterface> getRequiredInterfaces() {
 		return requiredInterfaces;
+	}
+
+	public HashSet<ArchitecturalComponentType> getComponentTypes() {
+		return componentTypes;
+	}
+
+	public ArrayList<ArchitecturalComponentConstraint> getComponentConstraints() {
+		return componentConstraints;
 	}
 
 	public void addRequiredInterfaces(HashSet<RequiredPortInterface> additionalPorts) {

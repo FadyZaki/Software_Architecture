@@ -11,6 +11,8 @@ import com.architecture.specification.library.architectural.model.portinterface.
 import com.architecture.specification.library.architectural.model.portinterface.PortInterfaceType;
 import com.architecture.specification.library.architectural.model.portinterface.ProvidedPortInterface;
 import com.architecture.specification.library.architectural.model.portinterface.RequiredPortInterface;
+import com.architecture.specification.library.architectural.style.InMemoryArchitecturalStyles;
+import com.architecture.specification.library.exceptions.ArchitecturalStyleException;
 import com.architecture.specification.library.exceptions.ComponentNotDescendantOfAnotherException;
 import com.architecture.specification.library.exceptions.ComponentNotFoundException;
 import com.architecture.specification.library.exceptions.PortInterfaceNotDefinedInComponentException;
@@ -49,94 +51,94 @@ public class CustomArchitecturalModelInitializer extends ArchitecturalModelIniti
 
 	private static String HANDLE_CLIENT_COMMANDS_PORT = "handleClientCommands";
 
-	public CustomArchitecturalModelInitializer(ArchitecturalModelBuilder architecturalModelBuilder) {
-		super(architecturalModelBuilder);
+	public CustomArchitecturalModelInitializer(ArchitecturalModelBuilder builder) {
+		super(builder);
 	}
 
 	@Override
 	public void initializeModelPortInterfaces() {
-		architecturalModelBuilder.addPortInterface(IDENTIFY_GEO_LOCATION_USING_IP_ADDRESS_PORT, PortInterfaceType.PROVIDED,
+		builder.addPortInterface(IDENTIFY_GEO_LOCATION_USING_IP_ADDRESS_PORT, PortInterfaceType.PROVIDED,
 				PortInterfaceCommunicationType.TASK_EXECUTION, PortInterfaceCommunicationSynchronizationType.SYNC);
 
-		architecturalModelBuilder.addPortInterface(IDENTIFY_GEO_LOCATION_USING_IP_ADDRESS_PORT, PortInterfaceType.REQUIRED,
+		builder.addPortInterface(IDENTIFY_GEO_LOCATION_USING_IP_ADDRESS_PORT, PortInterfaceType.REQUIRED,
 				PortInterfaceCommunicationType.TASK_EXECUTION, PortInterfaceCommunicationSynchronizationType.SYNC);
 
-		architecturalModelBuilder.addPortInterface(REGISTER_USER_PORT, PortInterfaceType.PROVIDED, PortInterfaceCommunicationType.TASK_EXECUTION,
+		builder.addPortInterface(REGISTER_USER_PORT, PortInterfaceType.PROVIDED, PortInterfaceCommunicationType.TASK_EXECUTION,
 				PortInterfaceCommunicationSynchronizationType.SYNC);
 
-		architecturalModelBuilder.addPortInterface(REGISTER_USER_PORT, PortInterfaceType.REQUIRED, PortInterfaceCommunicationType.TASK_EXECUTION,
+		builder.addPortInterface(REGISTER_USER_PORT, PortInterfaceType.REQUIRED, PortInterfaceCommunicationType.TASK_EXECUTION,
 				PortInterfaceCommunicationSynchronizationType.SYNC);
 
-		architecturalModelBuilder.addPortInterface(AUTHORIZE_USER_PORT, PortInterfaceType.PROVIDED, PortInterfaceCommunicationType.TASK_EXECUTION,
+		builder.addPortInterface(AUTHORIZE_USER_PORT, PortInterfaceType.PROVIDED, PortInterfaceCommunicationType.TASK_EXECUTION,
 				PortInterfaceCommunicationSynchronizationType.SYNC);
 
-		architecturalModelBuilder.addPortInterface(AUTHORIZE_USER_PORT, PortInterfaceType.REQUIRED, PortInterfaceCommunicationType.TASK_EXECUTION,
+		builder.addPortInterface(AUTHORIZE_USER_PORT, PortInterfaceType.REQUIRED, PortInterfaceCommunicationType.TASK_EXECUTION,
 				PortInterfaceCommunicationSynchronizationType.SYNC);
 
-		architecturalModelBuilder.addPortInterface(POST_MESSAGE_PORT, PortInterfaceType.PROVIDED, PortInterfaceCommunicationType.TASK_EXECUTION,
+		builder.addPortInterface(POST_MESSAGE_PORT, PortInterfaceType.PROVIDED, PortInterfaceCommunicationType.TASK_EXECUTION,
 				PortInterfaceCommunicationSynchronizationType.SYNC);
 
-		architecturalModelBuilder.addPortInterface(POST_MESSAGE_PORT, PortInterfaceType.REQUIRED, PortInterfaceCommunicationType.TASK_EXECUTION,
+		builder.addPortInterface(POST_MESSAGE_PORT, PortInterfaceType.REQUIRED, PortInterfaceCommunicationType.TASK_EXECUTION,
 				PortInterfaceCommunicationSynchronizationType.SYNC);
 
-		architecturalModelBuilder.addPortInterface(REPLY_TO_MESSAGE_PORT, PortInterfaceType.PROVIDED, PortInterfaceCommunicationType.TASK_EXECUTION,
+		builder.addPortInterface(REPLY_TO_MESSAGE_PORT, PortInterfaceType.PROVIDED, PortInterfaceCommunicationType.TASK_EXECUTION,
 				PortInterfaceCommunicationSynchronizationType.SYNC);
 
-		architecturalModelBuilder.addPortInterface(REPLY_TO_MESSAGE_PORT, PortInterfaceType.REQUIRED, PortInterfaceCommunicationType.TASK_EXECUTION,
+		builder.addPortInterface(REPLY_TO_MESSAGE_PORT, PortInterfaceType.REQUIRED, PortInterfaceCommunicationType.TASK_EXECUTION,
 				PortInterfaceCommunicationSynchronizationType.SYNC);
 
-		architecturalModelBuilder.addPortInterface(DELETE_MESSAGE_PORT, PortInterfaceType.PROVIDED, PortInterfaceCommunicationType.TASK_EXECUTION,
+		builder.addPortInterface(DELETE_MESSAGE_PORT, PortInterfaceType.PROVIDED, PortInterfaceCommunicationType.TASK_EXECUTION,
 				PortInterfaceCommunicationSynchronizationType.SYNC);
 
-		architecturalModelBuilder.addPortInterface(DELETE_MESSAGE_PORT, PortInterfaceType.REQUIRED, PortInterfaceCommunicationType.TASK_EXECUTION,
+		builder.addPortInterface(DELETE_MESSAGE_PORT, PortInterfaceType.REQUIRED, PortInterfaceCommunicationType.TASK_EXECUTION,
 				PortInterfaceCommunicationSynchronizationType.SYNC);
 
-		architecturalModelBuilder.addPortInterface(SOCIAL_NETWORK_STATE_PORT, PortInterfaceType.PROVIDED, PortInterfaceCommunicationType.SHARED_DATA,
+		builder.addPortInterface(SOCIAL_NETWORK_STATE_PORT, PortInterfaceType.PROVIDED, PortInterfaceCommunicationType.SHARED_DATA,
 				PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_NO_CALLBACK);
 
-		architecturalModelBuilder.addPortInterface(SOCIAL_NETWORK_STATE_PORT, PortInterfaceType.REQUIRED, PortInterfaceCommunicationType.SHARED_DATA,
+		builder.addPortInterface(SOCIAL_NETWORK_STATE_PORT, PortInterfaceType.REQUIRED, PortInterfaceCommunicationType.SHARED_DATA,
 				PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_NO_CALLBACK);
 
-		architecturalModelBuilder.addPortInterface(MESSAGE_INFORMATION_PORT, PortInterfaceType.PROVIDED, PortInterfaceCommunicationType.SHARED_DATA,
+		builder.addPortInterface(MESSAGE_INFORMATION_PORT, PortInterfaceType.PROVIDED, PortInterfaceCommunicationType.SHARED_DATA,
 				PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_NO_CALLBACK);
 
-		architecturalModelBuilder.addPortInterface(MESSAGE_INFORMATION_PORT, PortInterfaceType.REQUIRED, PortInterfaceCommunicationType.SHARED_DATA,
+		builder.addPortInterface(MESSAGE_INFORMATION_PORT, PortInterfaceType.REQUIRED, PortInterfaceCommunicationType.SHARED_DATA,
 				PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_NO_CALLBACK);
 
-		architecturalModelBuilder.addPortInterface(MESSAGE_REPLIES_PORT, PortInterfaceType.PROVIDED, PortInterfaceCommunicationType.SHARED_DATA,
+		builder.addPortInterface(MESSAGE_REPLIES_PORT, PortInterfaceType.PROVIDED, PortInterfaceCommunicationType.SHARED_DATA,
 				PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_NO_CALLBACK);
 
-		architecturalModelBuilder.addPortInterface(MESSAGE_REPLIES_PORT, PortInterfaceType.REQUIRED, PortInterfaceCommunicationType.SHARED_DATA,
+		builder.addPortInterface(MESSAGE_REPLIES_PORT, PortInterfaceType.REQUIRED, PortInterfaceCommunicationType.SHARED_DATA,
 				PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_NO_CALLBACK);
 
-		architecturalModelBuilder.addPortInterface(USER_INFORMATION_PORT, PortInterfaceType.PROVIDED, PortInterfaceCommunicationType.SHARED_DATA,
+		builder.addPortInterface(USER_INFORMATION_PORT, PortInterfaceType.PROVIDED, PortInterfaceCommunicationType.SHARED_DATA,
 				PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_NO_CALLBACK);
 
-		architecturalModelBuilder.addPortInterface(USER_INFORMATION_PORT, PortInterfaceType.REQUIRED, PortInterfaceCommunicationType.SHARED_DATA,
+		builder.addPortInterface(USER_INFORMATION_PORT, PortInterfaceType.REQUIRED, PortInterfaceCommunicationType.SHARED_DATA,
 				PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_NO_CALLBACK);
 
-		architecturalModelBuilder.addPortInterface(USER_ACCOUNT_TYPE_PORT, PortInterfaceType.PROVIDED, PortInterfaceCommunicationType.SHARED_DATA,
+		builder.addPortInterface(USER_ACCOUNT_TYPE_PORT, PortInterfaceType.PROVIDED, PortInterfaceCommunicationType.SHARED_DATA,
 				PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_NO_CALLBACK);
 
-		architecturalModelBuilder.addPortInterface(USER_ACCOUNT_TYPE_PORT, PortInterfaceType.REQUIRED, PortInterfaceCommunicationType.SHARED_DATA,
+		builder.addPortInterface(USER_ACCOUNT_TYPE_PORT, PortInterfaceType.REQUIRED, PortInterfaceCommunicationType.SHARED_DATA,
 				PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_NO_CALLBACK);
 
-		architecturalModelBuilder.addPortInterface(USER_SUBSCRIPTION_FEE_PORT, PortInterfaceType.PROVIDED, PortInterfaceCommunicationType.SHARED_DATA,
+		builder.addPortInterface(USER_SUBSCRIPTION_FEE_PORT, PortInterfaceType.PROVIDED, PortInterfaceCommunicationType.SHARED_DATA,
 				PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_NO_CALLBACK);
 
-		architecturalModelBuilder.addPortInterface(USER_SUBSCRIPTION_FEE_PORT, PortInterfaceType.REQUIRED, PortInterfaceCommunicationType.SHARED_DATA,
+		builder.addPortInterface(USER_SUBSCRIPTION_FEE_PORT, PortInterfaceType.REQUIRED, PortInterfaceCommunicationType.SHARED_DATA,
 				PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_NO_CALLBACK);
 
-		architecturalModelBuilder.addPortInterface(SOCKET_PORT, PortInterfaceType.PROVIDED, PortInterfaceCommunicationType.MESSAGE_PASSING,
+		builder.addPortInterface(SOCKET_PORT, PortInterfaceType.PROVIDED, PortInterfaceCommunicationType.MESSAGE_PASSING,
 				PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_CALLBACK);
 
-		architecturalModelBuilder.addPortInterface(SOCKET_PORT, PortInterfaceType.REQUIRED, PortInterfaceCommunicationType.MESSAGE_PASSING,
+		builder.addPortInterface(SOCKET_PORT, PortInterfaceType.REQUIRED, PortInterfaceCommunicationType.MESSAGE_PASSING,
 				PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_CALLBACK);
 
-		architecturalModelBuilder.addPortInterface(HANDLE_CLIENT_COMMANDS_PORT, PortInterfaceType.PROVIDED, PortInterfaceCommunicationType.TASK_EXECUTION,
+		builder.addPortInterface(HANDLE_CLIENT_COMMANDS_PORT, PortInterfaceType.PROVIDED, PortInterfaceCommunicationType.TASK_EXECUTION,
 				PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_CALLBACK);
 
-		architecturalModelBuilder.addPortInterface(HANDLE_CLIENT_COMMANDS_PORT, PortInterfaceType.REQUIRED, PortInterfaceCommunicationType.TASK_EXECUTION,
+		builder.addPortInterface(HANDLE_CLIENT_COMMANDS_PORT, PortInterfaceType.REQUIRED, PortInterfaceCommunicationType.TASK_EXECUTION,
 				PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_CALLBACK);
 
 	}
@@ -144,138 +146,149 @@ public class CustomArchitecturalModelInitializer extends ArchitecturalModelIniti
 	@Override
 	public void initializeModelArchitecturalComponents() throws ComponentNotFoundException, PortInterfaceNotFoundException {
 
-		architecturalModelBuilder.addComponent(SERVER_COMPONENT, null, new ArrayList<String>(Arrays.asList(new String[] { "trial2" })), null, null, false);
-		architecturalModelBuilder.addComponent(CLIENT_COMPONENT, null, null, null, null, false);
+		builder.addComponent(SERVER_COMPONENT, null, new ArrayList<String>(Arrays.asList(new String[] { "trial2" })), null, null, null, null, false);
+		builder.addComponent(CLIENT_COMPONENT, null, null, null, null, null, null, false);
 
 		HashSet<ProvidedPortInterface> geoLocatorComponentProvidedInterfaces = new HashSet<ProvidedPortInterface>();
-		geoLocatorComponentProvidedInterfaces.add(architecturalModelBuilder.getProvidedPortInterface(IDENTIFY_GEO_LOCATION_USING_IP_ADDRESS_PORT,
+		geoLocatorComponentProvidedInterfaces.add(builder.getProvidedPortInterface(IDENTIFY_GEO_LOCATION_USING_IP_ADDRESS_PORT,
 				PortInterfaceCommunicationType.TASK_EXECUTION, PortInterfaceCommunicationSynchronizationType.SYNC));
-		architecturalModelBuilder.addComponent(GEO_LOCATOR_COMPONENT, SERVER_COMPONENT, new ArrayList<String>(Arrays.asList(new String[] { "trial1" })),
-				geoLocatorComponentProvidedInterfaces, null, false);
+		builder.addComponent(GEO_LOCATOR_COMPONENT, SERVER_COMPONENT, new ArrayList<String>(Arrays.asList(new String[] { "trial1" })),
+				geoLocatorComponentProvidedInterfaces, null, null, null, false);
 
-		architecturalModelBuilder.addComponent(IP2LOCATION_COMPONENT, null, new ArrayList<>(Arrays.asList(new String[] { "com.ip2location.IP2Location", "com.ip2location.IPResult" })), null, null, true);
+		builder.addComponent(IP2LOCATION_COMPONENT, null, new ArrayList<>(Arrays.asList(new String[] { "com.ip2location.IP2Location", "com.ip2location.IPResult" })), null, null, null, null, true);
 		
 
 		HashSet<ProvidedPortInterface> socialNetworkComponentProvidedInterfaces = new HashSet<ProvidedPortInterface>();
-		socialNetworkComponentProvidedInterfaces.add(architecturalModelBuilder.getProvidedPortInterface(REGISTER_USER_PORT,
+		socialNetworkComponentProvidedInterfaces.add(builder.getProvidedPortInterface(REGISTER_USER_PORT,
 				PortInterfaceCommunicationType.TASK_EXECUTION, PortInterfaceCommunicationSynchronizationType.SYNC));
-		socialNetworkComponentProvidedInterfaces.add(architecturalModelBuilder.getProvidedPortInterface(AUTHORIZE_USER_PORT,
+		socialNetworkComponentProvidedInterfaces.add(builder.getProvidedPortInterface(AUTHORIZE_USER_PORT,
 				PortInterfaceCommunicationType.TASK_EXECUTION, PortInterfaceCommunicationSynchronizationType.SYNC));
-		socialNetworkComponentProvidedInterfaces.add(architecturalModelBuilder.getProvidedPortInterface(POST_MESSAGE_PORT,
+		socialNetworkComponentProvidedInterfaces.add(builder.getProvidedPortInterface(POST_MESSAGE_PORT,
 				PortInterfaceCommunicationType.TASK_EXECUTION, PortInterfaceCommunicationSynchronizationType.SYNC));
-		socialNetworkComponentProvidedInterfaces.add(architecturalModelBuilder.getProvidedPortInterface(REPLY_TO_MESSAGE_PORT,
+		socialNetworkComponentProvidedInterfaces.add(builder.getProvidedPortInterface(REPLY_TO_MESSAGE_PORT,
 				PortInterfaceCommunicationType.TASK_EXECUTION, PortInterfaceCommunicationSynchronizationType.SYNC));
-		socialNetworkComponentProvidedInterfaces.add(architecturalModelBuilder.getProvidedPortInterface(DELETE_MESSAGE_PORT,
+		socialNetworkComponentProvidedInterfaces.add(builder.getProvidedPortInterface(DELETE_MESSAGE_PORT,
 				PortInterfaceCommunicationType.TASK_EXECUTION, PortInterfaceCommunicationSynchronizationType.SYNC));
-		socialNetworkComponentProvidedInterfaces.add(architecturalModelBuilder.getProvidedPortInterface(SOCIAL_NETWORK_STATE_PORT,
+		socialNetworkComponentProvidedInterfaces.add(builder.getProvidedPortInterface(SOCIAL_NETWORK_STATE_PORT,
 				PortInterfaceCommunicationType.SHARED_DATA, PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_NO_CALLBACK));
 
 		HashSet<RequiredPortInterface> socialNetworkComponentRequiredInterfaces = new HashSet<RequiredPortInterface>();
-		socialNetworkComponentRequiredInterfaces.add(architecturalModelBuilder.getRequiredPortInterface(IDENTIFY_GEO_LOCATION_USING_IP_ADDRESS_PORT,
+		socialNetworkComponentRequiredInterfaces.add(builder.getRequiredPortInterface(IDENTIFY_GEO_LOCATION_USING_IP_ADDRESS_PORT,
 				PortInterfaceCommunicationType.TASK_EXECUTION, PortInterfaceCommunicationSynchronizationType.SYNC));
-		socialNetworkComponentRequiredInterfaces.add(architecturalModelBuilder.getRequiredPortInterface(MESSAGE_INFORMATION_PORT,
+		socialNetworkComponentRequiredInterfaces.add(builder.getRequiredPortInterface(MESSAGE_INFORMATION_PORT,
 				PortInterfaceCommunicationType.SHARED_DATA, PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_NO_CALLBACK));
-		socialNetworkComponentRequiredInterfaces.add(architecturalModelBuilder.getRequiredPortInterface(MESSAGE_REPLIES_PORT,
+		socialNetworkComponentRequiredInterfaces.add(builder.getRequiredPortInterface(MESSAGE_REPLIES_PORT,
 				PortInterfaceCommunicationType.SHARED_DATA, PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_NO_CALLBACK));
-		socialNetworkComponentRequiredInterfaces.add(architecturalModelBuilder.getRequiredPortInterface(USER_INFORMATION_PORT,
+		socialNetworkComponentRequiredInterfaces.add(builder.getRequiredPortInterface(USER_INFORMATION_PORT,
 				PortInterfaceCommunicationType.SHARED_DATA, PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_NO_CALLBACK));
-		socialNetworkComponentRequiredInterfaces.add(architecturalModelBuilder.getRequiredPortInterface(USER_ACCOUNT_TYPE_PORT,
+		socialNetworkComponentRequiredInterfaces.add(builder.getRequiredPortInterface(USER_ACCOUNT_TYPE_PORT,
 				PortInterfaceCommunicationType.SHARED_DATA, PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_NO_CALLBACK));
-		socialNetworkComponentRequiredInterfaces.add(architecturalModelBuilder.getRequiredPortInterface(USER_SUBSCRIPTION_FEE_PORT,
+		socialNetworkComponentRequiredInterfaces.add(builder.getRequiredPortInterface(USER_SUBSCRIPTION_FEE_PORT,
 				PortInterfaceCommunicationType.SHARED_DATA, PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_NO_CALLBACK));
 
-		architecturalModelBuilder.addComponent(SOCIAL_NETWORK_COMPONENT, SERVER_COMPONENT, null, socialNetworkComponentProvidedInterfaces,
-				socialNetworkComponentRequiredInterfaces, false);
+		builder.addComponent(SOCIAL_NETWORK_COMPONENT, SERVER_COMPONENT, null, socialNetworkComponentProvidedInterfaces,
+				socialNetworkComponentRequiredInterfaces, null, null, false);
 
 		HashSet<ProvidedPortInterface> messageComponentProvidedInterfaces = new HashSet<ProvidedPortInterface>();
-		messageComponentProvidedInterfaces.add(architecturalModelBuilder.getProvidedPortInterface(MESSAGE_INFORMATION_PORT,
+		messageComponentProvidedInterfaces.add(builder.getProvidedPortInterface(MESSAGE_INFORMATION_PORT,
 				PortInterfaceCommunicationType.SHARED_DATA, PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_NO_CALLBACK));
-		messageComponentProvidedInterfaces.add(architecturalModelBuilder.getProvidedPortInterface(MESSAGE_REPLIES_PORT,
+		messageComponentProvidedInterfaces.add(builder.getProvidedPortInterface(MESSAGE_REPLIES_PORT,
 				PortInterfaceCommunicationType.SHARED_DATA, PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_NO_CALLBACK));
 
-		architecturalModelBuilder.addComponent(MESSAGE_COMPONENT, SERVER_COMPONENT, null, messageComponentProvidedInterfaces, null, false);
+		builder.addComponent(MESSAGE_COMPONENT, SERVER_COMPONENT, null, messageComponentProvidedInterfaces, null, null, null, false);
 
 		HashSet<ProvidedPortInterface> userComponentProvidedInterfaces = new HashSet<ProvidedPortInterface>();
-		userComponentProvidedInterfaces.add(architecturalModelBuilder.getProvidedPortInterface(USER_INFORMATION_PORT,
+		userComponentProvidedInterfaces.add(builder.getProvidedPortInterface(USER_INFORMATION_PORT,
 				PortInterfaceCommunicationType.SHARED_DATA, PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_NO_CALLBACK));
-		userComponentProvidedInterfaces.add(architecturalModelBuilder.getProvidedPortInterface(USER_ACCOUNT_TYPE_PORT,
+		userComponentProvidedInterfaces.add(builder.getProvidedPortInterface(USER_ACCOUNT_TYPE_PORT,
 				PortInterfaceCommunicationType.SHARED_DATA, PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_NO_CALLBACK));
-		userComponentProvidedInterfaces.add(architecturalModelBuilder.getProvidedPortInterface(USER_SUBSCRIPTION_FEE_PORT,
+		userComponentProvidedInterfaces.add(builder.getProvidedPortInterface(USER_SUBSCRIPTION_FEE_PORT,
 				PortInterfaceCommunicationType.SHARED_DATA, PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_NO_CALLBACK));
 
-		architecturalModelBuilder.addComponent(USER_COMPONENT, SERVER_COMPONENT, null, userComponentProvidedInterfaces, null, false);
+		builder.addComponent(USER_COMPONENT, SERVER_COMPONENT, null, userComponentProvidedInterfaces, null, null, null, false);
 
 		HashSet<RequiredPortInterface> clientHandlerControllerComponentRequiredInterfaces = new HashSet<RequiredPortInterface>();
-		clientHandlerControllerComponentRequiredInterfaces.add(architecturalModelBuilder.getRequiredPortInterface(REGISTER_USER_PORT,
+		clientHandlerControllerComponentRequiredInterfaces.add(builder.getRequiredPortInterface(REGISTER_USER_PORT,
 				PortInterfaceCommunicationType.TASK_EXECUTION, PortInterfaceCommunicationSynchronizationType.SYNC));
-		clientHandlerControllerComponentRequiredInterfaces.add(architecturalModelBuilder.getRequiredPortInterface(AUTHORIZE_USER_PORT,
+		clientHandlerControllerComponentRequiredInterfaces.add(builder.getRequiredPortInterface(AUTHORIZE_USER_PORT,
 				PortInterfaceCommunicationType.TASK_EXECUTION, PortInterfaceCommunicationSynchronizationType.SYNC));
-		clientHandlerControllerComponentRequiredInterfaces.add(architecturalModelBuilder.getRequiredPortInterface(POST_MESSAGE_PORT,
+		clientHandlerControllerComponentRequiredInterfaces.add(builder.getRequiredPortInterface(POST_MESSAGE_PORT,
 				PortInterfaceCommunicationType.TASK_EXECUTION, PortInterfaceCommunicationSynchronizationType.SYNC));
-		clientHandlerControllerComponentRequiredInterfaces.add(architecturalModelBuilder.getRequiredPortInterface(REPLY_TO_MESSAGE_PORT,
+		clientHandlerControllerComponentRequiredInterfaces.add(builder.getRequiredPortInterface(REPLY_TO_MESSAGE_PORT,
 				PortInterfaceCommunicationType.TASK_EXECUTION, PortInterfaceCommunicationSynchronizationType.SYNC));
-		clientHandlerControllerComponentRequiredInterfaces.add(architecturalModelBuilder.getRequiredPortInterface(DELETE_MESSAGE_PORT,
+		clientHandlerControllerComponentRequiredInterfaces.add(builder.getRequiredPortInterface(DELETE_MESSAGE_PORT,
 				PortInterfaceCommunicationType.TASK_EXECUTION, PortInterfaceCommunicationSynchronizationType.SYNC));
-		clientHandlerControllerComponentRequiredInterfaces.add(architecturalModelBuilder.getRequiredPortInterface(SOCIAL_NETWORK_STATE_PORT,
+		clientHandlerControllerComponentRequiredInterfaces.add(builder.getRequiredPortInterface(SOCIAL_NETWORK_STATE_PORT,
 				PortInterfaceCommunicationType.SHARED_DATA, PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_NO_CALLBACK));
-		clientHandlerControllerComponentRequiredInterfaces.add(architecturalModelBuilder.getRequiredPortInterface(SOCKET_PORT,
+		clientHandlerControllerComponentRequiredInterfaces.add(builder.getRequiredPortInterface(SOCKET_PORT,
 				PortInterfaceCommunicationType.MESSAGE_PASSING, PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_CALLBACK));
 
-		architecturalModelBuilder.addComponent(CLIENT_HANDLER_COMPONENT, SERVER_COMPONENT, null, null, clientHandlerControllerComponentRequiredInterfaces, false);
+		builder.addComponent(CLIENT_HANDLER_COMPONENT, SERVER_COMPONENT, null, null, clientHandlerControllerComponentRequiredInterfaces, null, null, false);
 
 		HashSet<ProvidedPortInterface> serverHandlerControllerComponentProvidedInterfaces = new HashSet<ProvidedPortInterface>();
-		serverHandlerControllerComponentProvidedInterfaces.add(architecturalModelBuilder.getProvidedPortInterface(SOCKET_PORT,
+		serverHandlerControllerComponentProvidedInterfaces.add(builder.getProvidedPortInterface(SOCKET_PORT,
 				PortInterfaceCommunicationType.MESSAGE_PASSING, PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_CALLBACK));
-		serverHandlerControllerComponentProvidedInterfaces.add(architecturalModelBuilder.getProvidedPortInterface(HANDLE_CLIENT_COMMANDS_PORT,
+		serverHandlerControllerComponentProvidedInterfaces.add(builder.getProvidedPortInterface(HANDLE_CLIENT_COMMANDS_PORT,
 				PortInterfaceCommunicationType.TASK_EXECUTION, PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_CALLBACK));
 
-		architecturalModelBuilder.addComponent(SERVER_HANDLER_COMPONENT, CLIENT_COMPONENT, null, serverHandlerControllerComponentProvidedInterfaces, null, false);
+		builder.addComponent(SERVER_HANDLER_COMPONENT, CLIENT_COMPONENT, null, serverHandlerControllerComponentProvidedInterfaces, null, null, null, false);
 
 		HashSet<RequiredPortInterface> uiComponentRequiredInterfaces = new HashSet<RequiredPortInterface>();
-		uiComponentRequiredInterfaces.add(architecturalModelBuilder.getRequiredPortInterface(HANDLE_CLIENT_COMMANDS_PORT,
+		uiComponentRequiredInterfaces.add(builder.getRequiredPortInterface(HANDLE_CLIENT_COMMANDS_PORT,
 				PortInterfaceCommunicationType.TASK_EXECUTION, PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_CALLBACK));
 
-		architecturalModelBuilder.addComponent(UI_COMPONENT, CLIENT_COMPONENT, null, null, uiComponentRequiredInterfaces, false);
+		builder.addComponent(UI_COMPONENT, CLIENT_COMPONENT, null, null, uiComponentRequiredInterfaces, null, null, false);
 
 	}
 
 	@Override
 	public void initializeModelComponentsCommunicationLinks() throws ComponentNotFoundException, PortInterfaceNotDefinedInComponentException,
 			PortInterfaceNotFoundException, ComponentNotDescendantOfAnotherException {
-		architecturalModelBuilder.addCommunicationLink(CLIENT_COMPONENT, SERVER_COMPONENT, SERVER_HANDLER_COMPONENT, SOCKET_PORT,
+		builder.addCommunicationLink(CLIENT_COMPONENT, SERVER_COMPONENT, SERVER_HANDLER_COMPONENT, SOCKET_PORT,
 				PortInterfaceCommunicationType.MESSAGE_PASSING, PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_CALLBACK);
 
-		architecturalModelBuilder.addCommunicationLink(GEO_LOCATOR_COMPONENT, SOCIAL_NETWORK_COMPONENT, null, IDENTIFY_GEO_LOCATION_USING_IP_ADDRESS_PORT,
+		builder.addCommunicationLink(GEO_LOCATOR_COMPONENT, SOCIAL_NETWORK_COMPONENT, null, IDENTIFY_GEO_LOCATION_USING_IP_ADDRESS_PORT,
 				PortInterfaceCommunicationType.TASK_EXECUTION, PortInterfaceCommunicationSynchronizationType.SYNC);
 
-		architecturalModelBuilder.addCommunicationLink(SOCIAL_NETWORK_COMPONENT, CLIENT_HANDLER_COMPONENT, null, REGISTER_USER_PORT,
+		builder.addCommunicationLink(SOCIAL_NETWORK_COMPONENT, CLIENT_HANDLER_COMPONENT, null, REGISTER_USER_PORT,
 				PortInterfaceCommunicationType.TASK_EXECUTION, PortInterfaceCommunicationSynchronizationType.SYNC);
-		architecturalModelBuilder.addCommunicationLink(SOCIAL_NETWORK_COMPONENT, CLIENT_HANDLER_COMPONENT, null, AUTHORIZE_USER_PORT,
+		builder.addCommunicationLink(SOCIAL_NETWORK_COMPONENT, CLIENT_HANDLER_COMPONENT, null, AUTHORIZE_USER_PORT,
 				PortInterfaceCommunicationType.TASK_EXECUTION, PortInterfaceCommunicationSynchronizationType.SYNC);
-		architecturalModelBuilder.addCommunicationLink(SOCIAL_NETWORK_COMPONENT, CLIENT_HANDLER_COMPONENT, null, POST_MESSAGE_PORT,
+		builder.addCommunicationLink(SOCIAL_NETWORK_COMPONENT, CLIENT_HANDLER_COMPONENT, null, POST_MESSAGE_PORT,
 				PortInterfaceCommunicationType.TASK_EXECUTION, PortInterfaceCommunicationSynchronizationType.SYNC);
-		architecturalModelBuilder.addCommunicationLink(SOCIAL_NETWORK_COMPONENT, CLIENT_HANDLER_COMPONENT, null, REPLY_TO_MESSAGE_PORT,
+		builder.addCommunicationLink(SOCIAL_NETWORK_COMPONENT, CLIENT_HANDLER_COMPONENT, null, REPLY_TO_MESSAGE_PORT,
 				PortInterfaceCommunicationType.TASK_EXECUTION, PortInterfaceCommunicationSynchronizationType.SYNC);
-		architecturalModelBuilder.addCommunicationLink(SOCIAL_NETWORK_COMPONENT, CLIENT_HANDLER_COMPONENT, null, DELETE_MESSAGE_PORT,
+		builder.addCommunicationLink(SOCIAL_NETWORK_COMPONENT, CLIENT_HANDLER_COMPONENT, null, DELETE_MESSAGE_PORT,
 				PortInterfaceCommunicationType.TASK_EXECUTION, PortInterfaceCommunicationSynchronizationType.SYNC);
-		architecturalModelBuilder.addCommunicationLink(SOCIAL_NETWORK_COMPONENT, CLIENT_HANDLER_COMPONENT, null, SOCIAL_NETWORK_STATE_PORT,
+		builder.addCommunicationLink(SOCIAL_NETWORK_COMPONENT, CLIENT_HANDLER_COMPONENT, null, SOCIAL_NETWORK_STATE_PORT,
 				PortInterfaceCommunicationType.SHARED_DATA, PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_NO_CALLBACK);
 
-		architecturalModelBuilder.addCommunicationLink(USER_COMPONENT, SOCIAL_NETWORK_COMPONENT, null, USER_INFORMATION_PORT,
+		builder.addCommunicationLink(USER_COMPONENT, SOCIAL_NETWORK_COMPONENT, null, USER_INFORMATION_PORT,
 				PortInterfaceCommunicationType.SHARED_DATA, PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_NO_CALLBACK);
-		architecturalModelBuilder.addCommunicationLink(USER_COMPONENT, SOCIAL_NETWORK_COMPONENT, null, USER_ACCOUNT_TYPE_PORT,
+		builder.addCommunicationLink(USER_COMPONENT, SOCIAL_NETWORK_COMPONENT, null, USER_ACCOUNT_TYPE_PORT,
 				PortInterfaceCommunicationType.SHARED_DATA, PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_NO_CALLBACK);
-		architecturalModelBuilder.addCommunicationLink(USER_COMPONENT, SOCIAL_NETWORK_COMPONENT, null, USER_SUBSCRIPTION_FEE_PORT,
-				PortInterfaceCommunicationType.SHARED_DATA, PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_NO_CALLBACK);
-
-		architecturalModelBuilder.addCommunicationLink(MESSAGE_COMPONENT, SOCIAL_NETWORK_COMPONENT, null, MESSAGE_INFORMATION_PORT,
-				PortInterfaceCommunicationType.SHARED_DATA, PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_NO_CALLBACK);
-		architecturalModelBuilder.addCommunicationLink(MESSAGE_COMPONENT, SOCIAL_NETWORK_COMPONENT, null, MESSAGE_REPLIES_PORT,
+		builder.addCommunicationLink(USER_COMPONENT, SOCIAL_NETWORK_COMPONENT, null, USER_SUBSCRIPTION_FEE_PORT,
 				PortInterfaceCommunicationType.SHARED_DATA, PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_NO_CALLBACK);
 
-		architecturalModelBuilder.addCommunicationLink(SERVER_HANDLER_COMPONENT, UI_COMPONENT, null, HANDLE_CLIENT_COMMANDS_PORT,
+		builder.addCommunicationLink(MESSAGE_COMPONENT, SOCIAL_NETWORK_COMPONENT, null, MESSAGE_INFORMATION_PORT,
+				PortInterfaceCommunicationType.SHARED_DATA, PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_NO_CALLBACK);
+		builder.addCommunicationLink(MESSAGE_COMPONENT, SOCIAL_NETWORK_COMPONENT, null, MESSAGE_REPLIES_PORT,
+				PortInterfaceCommunicationType.SHARED_DATA, PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_NO_CALLBACK);
+
+		builder.addCommunicationLink(SERVER_HANDLER_COMPONENT, UI_COMPONENT, null, HANDLE_CLIENT_COMMANDS_PORT,
 				PortInterfaceCommunicationType.TASK_EXECUTION, PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_CALLBACK);
 
+	}
+
+	@Override
+	public void addConstraintsToModel() {
+		return;
+		
+	}
+
+	@Override
+	public void addStylesToModel() throws ArchitecturalStyleException {
+		builder.addModelCompliantStyle(InMemoryArchitecturalStyles.SERVER_CLIENT_STYLE);
 	}
 
 }

@@ -13,12 +13,22 @@ import com.architecture.specification.architectural.model.custom.CustomArchitect
 import com.architecture.specification.library.architectural.model.communication.link.CommunicationLink;
 import com.architecture.specification.library.architectural.model.component.ArchitecturalComponent;
 import com.architecture.specification.library.architectural.model.component.BlackboxArchitecturalComponent;
+import com.architecture.specification.library.architectural.model.constraint.component.ArchitecturalComponentConstraint;
+import com.architecture.specification.library.architectural.model.constraint.model.IArchitecturalModelConstraint;
 import com.architecture.specification.library.architectural.model.portinterface.PortInterface;
 import com.architecture.specification.library.architectural.model.portinterface.PortInterfaceCommunicationSynchronizationType;
 import com.architecture.specification.library.architectural.model.portinterface.PortInterfaceCommunicationType;
 import com.architecture.specification.library.architectural.model.portinterface.PortInterfaceType;
 import com.architecture.specification.library.architectural.model.portinterface.ProvidedPortInterface;
 import com.architecture.specification.library.architectural.model.portinterface.RequiredPortInterface;
+import com.architecture.specification.library.architectural.style.ArchitecturalStyle;
+import com.architecture.specification.library.architectural.style.ArchitecturalStylesBuilder;
+import com.architecture.specification.library.architectural.style.ArchitecturalStylesInitializer;
+import com.architecture.specification.library.architectural.style.InMemoryArchitecturalStyles;
+import com.architecture.specification.library.architectural.style.component.type.ArchitecturalComponentType;
+import com.architecture.specification.library.architectural.style.component.type.InMemoryArchitecturalComponentTypes;
+import com.architecture.specification.library.exceptions.ArchitecturalStyleException;
+import com.architecture.specification.library.exceptions.BrokenConstraintException;
 import com.architecture.specification.library.exceptions.ComponentNotDescendantOfAnotherException;
 import com.architecture.specification.library.exceptions.ComponentNotFoundException;
 import com.architecture.specification.library.exceptions.IncompatiblePortInterfacesException;
@@ -35,28 +45,44 @@ public class ArchitecturalModelBuilder implements IArchitecturalModelBuilder {
 
 	private ArchitecturalModel architecturalModel;
 
-	public ArchitecturalModelBuilder() {
-		this.architecturalModel = new ArchitecturalModel();
+	public ArchitecturalModelBuilder(String modelIdentifier) {
+		this.architecturalModel = new ArchitecturalModel(modelIdentifier);
 	}
 
 	@Override
-	public void buildArchitecturalModel(CustomArchitecturalModelInitializer initializer)
-			throws IncompatiblePortInterfacesException, UnusedRequiredPortInterfaceException, UnusedComponentException,
-			ComponentNotFoundException, PortInterfaceNotDefinedInComponentException, PortInterfaceNotFoundException, ComponentNotDescendantOfAnotherException {
+	public void buildArchitecturalModel(IArchitecturalModelInitializer initializer)
+			throws IncompatiblePortInterfacesException, UnusedRequiredPortInterfaceException, UnusedComponentException, ComponentNotFoundException,
+			PortInterfaceNotDefinedInComponentException, PortInterfaceNotFoundException, ComponentNotDescendantOfAnotherException, BrokenConstraintException, ArchitecturalStyleException {
 
-		initializer.initializeModelPortInterfaces();
-		initializer.initializeModelArchitecturalComponents();
-		refineArchitecturalComponentsHierarchy();
+		if (initializer != null) {
+			initializer.initializeModelPortInterfaces();
+			initializer.initializeModelArchitecturalComponents();
+			refineArchitecturalComponentsHierarchy();
 
-		initializer.initializeModelComponentsCommunicationLinks();
-		verifyCommunicationLinksCompatibility();
-		//verifyEachComponentIsUsed();
-		verifyEachRequiredPortIsUsed();
+			initializer.initializeModelComponentsCommunicationLinks();
+			verifyCommunicationLinksCompatibility();
+			verifyEachComponentIsUsed();
+			verifyEachRequiredPortIsUsed();
 
-		//initializer.initializeModelConcurrentComponentsMap();
-		//refineConcurrentComponentsMap();
-		
-		architecturalModel.getClassComponentsMap();
+			initializer.addConstraintsToModel();
+			initializer.addStylesToModel();
+			verifyConstraints();
+		}
+
+	}
+
+	private void verifyConstraints() throws BrokenConstraintException {
+		for (IArchitecturalModelConstraint modelConstraint : architecturalModel.getModelConstraints()) {
+			if (!modelConstraint.verify(architecturalModel))
+				throw new BrokenConstraintException(architecturalModel.getModelIdentifier(), modelConstraint.getClass().getName());
+		}
+
+		for (ArchitecturalComponent architecturalComponent : architecturalModel.getModelComponentsIdentifiersMap().values()) {
+			for (ArchitecturalComponentConstraint componentConstraint : architecturalComponent.getComponentConstraints())
+				if (!componentConstraint.verify(architecturalComponent))
+					throw new BrokenConstraintException(architecturalComponent.getComponentIdentifier(), componentConstraint.getClass().getName());
+		}
+
 	}
 
 	private void refineArchitecturalComponentsHierarchy() {
@@ -96,10 +122,8 @@ public class ArchitecturalModelBuilder implements IArchitecturalModelBuilder {
 	private void verifyCommunicationLinksCompatibility() throws IncompatiblePortInterfacesException {
 		for (CommunicationLink cl : architecturalModel.getCommunicationLinks()) {
 			if (!cl.getProvidedPortInterface().canConnectTo(cl.getRequiredPortInterface())
-					|| !Objects.equals(cl.getProvidingComponent().getParentComponent(),
-							cl.getRequiringComponent().getParentComponent()))
-				throw new IncompatiblePortInterfacesException(
-						cl.getProvidedPortInterface().getPortInterfaceIdentifier(),
+					|| !Objects.equals(cl.getProvidingComponent().getParentComponent(), cl.getRequiringComponent().getParentComponent()))
+				throw new IncompatiblePortInterfacesException(cl.getProvidedPortInterface().getPortInterfaceIdentifier(),
 						cl.getRequiredPortInterface().getPortInterfaceIdentifier());
 			else
 				removeUnnecessaryPortInterfaces(cl);
@@ -142,8 +166,7 @@ public class ArchitecturalModelBuilder implements IArchitecturalModelBuilder {
 
 	}
 
-	private void addUsedComponents(HashSet<ArchitecturalComponent> usedComponents, ArchitecturalComponent component,
-			PortInterface p) {
+	private void addUsedComponents(HashSet<ArchitecturalComponent> usedComponents, ArchitecturalComponent component, PortInterface p) {
 		if (!component.getChildrenComponents().isEmpty()) {
 			for (ArchitecturalComponent c : component.getChildrenComponents()) {
 				if (c.getProvidedInterfaces().contains(p)) {
@@ -160,58 +183,38 @@ public class ArchitecturalModelBuilder implements IArchitecturalModelBuilder {
 		HashMap<ArchitecturalComponent, HashSet<RequiredPortInterface>> componentsUsedRequiredPortInterfacesMap = new HashMap<ArchitecturalComponent, HashSet<RequiredPortInterface>>();
 		HashSet<CommunicationLink> commLinks = architecturalModel.getCommunicationLinks();
 		for (CommunicationLink cl : commLinks) {
-			HashSet<RequiredPortInterface> requiredPortInterfaces = componentsUsedRequiredPortInterfacesMap
-					.containsKey(cl.getRequiringComponent())
-							? componentsUsedRequiredPortInterfacesMap.get(cl.getRequiringComponent())
-							: new HashSet<RequiredPortInterface>();
+			HashSet<RequiredPortInterface> requiredPortInterfaces = componentsUsedRequiredPortInterfacesMap.containsKey(cl.getRequiringComponent())
+					? componentsUsedRequiredPortInterfacesMap.get(cl.getRequiringComponent()) : new HashSet<RequiredPortInterface>();
 			requiredPortInterfaces.add(cl.getRequiredPortInterface());
 			componentsUsedRequiredPortInterfacesMap.put(cl.getRequiringComponent(), requiredPortInterfaces);
 		}
 
 		for (ArchitecturalComponent c : architecturalModel.getModelComponentsIdentifiersMap().values()) {
 			if (c.getParentComponent() == null) {
-				if (!c.getRequiredInterfaces().isEmpty()
-						&& !Objects.equals(c.getRequiredInterfaces(), componentsUsedRequiredPortInterfacesMap.get(c)))
+				if (!c.getRequiredInterfaces().isEmpty() && !Objects.equals(c.getRequiredInterfaces(), componentsUsedRequiredPortInterfacesMap.get(c)))
 					throw new UnusedRequiredPortInterfaceException(c);
 
 			}
 		}
 	}
 
-	private void refineConcurrentComponentsMap() {
-		HashMap<ArchitecturalComponent, HashSet<ArchitecturalComponent>> concurrentComponentsMap = architecturalModel
-				.getConcurrentComponentsMap();
-		for (Map.Entry<ArchitecturalComponent, HashSet<ArchitecturalComponent>> entry : concurrentComponentsMap
-				.entrySet()) {
-			ArchitecturalComponent currentComponent = entry.getKey();
-			for (ArchitecturalComponent c : entry.getValue()) {
-				if (concurrentComponentsMap.containsKey(c)) {
-					concurrentComponentsMap.get(c).add(currentComponent);
-				} else {
-					concurrentComponentsMap.put(c, new HashSet<>(Arrays.asList(currentComponent)));
-				}
-			}
-		}
-	}
-
-	public void addComponent(String componentIdentifier, String parentComponentIdentifier,
-			ArrayList<String> componentClasses, HashSet<ProvidedPortInterface> providedInterfaces,
-			HashSet<RequiredPortInterface> requiredInterfaces, boolean isBlackbox) throws ComponentNotFoundException {
-		HashMap<String, ArchitecturalComponent> componentsIdentifersMap = architecturalModel
-				.getModelComponentsIdentifiersMap();
+	public void addComponent(String componentIdentifier, String parentComponentIdentifier, ArrayList<String> componentClasses,
+			HashSet<ProvidedPortInterface> providedInterfaces, HashSet<RequiredPortInterface> requiredInterfaces,
+			HashSet<ArchitecturalComponentType> componentTypes, ArrayList<ArchitecturalComponentConstraint> componentConstraints, boolean isBlackbox)
+					throws ComponentNotFoundException {
+		HashMap<String, ArchitecturalComponent> componentsIdentifersMap = architecturalModel.getModelComponentsIdentifiersMap();
 		ArchitecturalComponent parentComponent = componentsIdentifersMap.get(parentComponentIdentifier);
 		if (parentComponentIdentifier != null && parentComponent == null)
 			throw new ComponentNotFoundException(parentComponentIdentifier);
 
 		ArchitecturalComponent architecturalComponent;
 		if (isBlackbox)
-			architecturalComponent = new BlackboxArchitecturalComponent(componentIdentifier, parentComponent,
-				componentClasses, providedInterfaces, requiredInterfaces);
+			architecturalComponent = new BlackboxArchitecturalComponent(componentIdentifier, parentComponent, componentClasses, providedInterfaces,
+					requiredInterfaces, componentTypes, componentConstraints);
 		else
-			architecturalComponent = new ArchitecturalComponent(componentIdentifier, parentComponent,
-					componentClasses, providedInterfaces, requiredInterfaces);
-		architecturalModel.getModelComponentsIdentifiersMap().put(architecturalComponent.getComponentIdentifier(),
-				architecturalComponent);
+			architecturalComponent = new ArchitecturalComponent(componentIdentifier, parentComponent, componentClasses, providedInterfaces, requiredInterfaces,
+					componentTypes, componentConstraints);
+		architecturalModel.getModelComponentsIdentifiersMap().put(architecturalComponent.getComponentIdentifier(), architecturalComponent);
 	}
 
 	public void addPortInterface(String portInterfaceIdentifier, PortInterfaceType portInterfaceType,
@@ -232,13 +235,10 @@ public class ArchitecturalModelBuilder implements IArchitecturalModelBuilder {
 
 	}
 
-	public ProvidedPortInterface getProvidedPortInterface(String portInterfaceIdentifier,
-			PortInterfaceCommunicationType portInterfaceCommunicationType,
-			PortInterfaceCommunicationSynchronizationType portInterfaceCommunicationSynchronizationType)
-					throws PortInterfaceNotFoundException {
+	public ProvidedPortInterface getProvidedPortInterface(String portInterfaceIdentifier, PortInterfaceCommunicationType portInterfaceCommunicationType,
+			PortInterfaceCommunicationSynchronizationType portInterfaceCommunicationSynchronizationType) throws PortInterfaceNotFoundException {
 
-		ProvidedPortInterface p = architecturalModel.getModelProvidedPortInterfacesMap()
-				.get(portInterfaceIdentifier);
+		ProvidedPortInterface p = architecturalModel.getModelProvidedPortInterfacesMap().get(portInterfaceIdentifier);
 
 		if (p == null)
 			throw new PortInterfaceNotFoundException(portInterfaceIdentifier);
@@ -247,12 +247,9 @@ public class ArchitecturalModelBuilder implements IArchitecturalModelBuilder {
 
 	}
 
-	public RequiredPortInterface getRequiredPortInterface(String portInterfaceIdentifier,
-			PortInterfaceCommunicationType portInterfaceCommunicationType,
-			PortInterfaceCommunicationSynchronizationType portInterfaceCommunicationSynchronizationType)
-					throws PortInterfaceNotFoundException {
-		RequiredPortInterface r = architecturalModel.getModelRequiredPortInterfacesMap()
-				.get(portInterfaceIdentifier);
+	public RequiredPortInterface getRequiredPortInterface(String portInterfaceIdentifier, PortInterfaceCommunicationType portInterfaceCommunicationType,
+			PortInterfaceCommunicationSynchronizationType portInterfaceCommunicationSynchronizationType) throws PortInterfaceNotFoundException {
+		RequiredPortInterface r = architecturalModel.getModelRequiredPortInterfacesMap().get(portInterfaceIdentifier);
 
 		if (r == null)
 			throw new PortInterfaceNotFoundException(portInterfaceIdentifier);
@@ -261,14 +258,11 @@ public class ArchitecturalModelBuilder implements IArchitecturalModelBuilder {
 
 	}
 
-	public void addCommunicationLink(String providingComponentIdentifier, String requiringComponentIdentifier,
-			String innermostProvidingComponentIdentifier, String portInterfaceIdentifier,
-			PortInterfaceCommunicationType portInterfaceCommunicationType,
-			PortInterfaceCommunicationSynchronizationType portInterfaceCommunicationSynchronizationType)
-					throws ComponentNotFoundException, PortInterfaceNotDefinedInComponentException,
-					PortInterfaceNotFoundException, ComponentNotDescendantOfAnotherException {
-		HashMap<String, ArchitecturalComponent> componentsIdentifersMap = architecturalModel
-				.getModelComponentsIdentifiersMap();
+	public void addCommunicationLink(String providingComponentIdentifier, String requiringComponentIdentifier, String innermostProvidingComponentIdentifier,
+			String portInterfaceIdentifier, PortInterfaceCommunicationType portInterfaceCommunicationType,
+			PortInterfaceCommunicationSynchronizationType portInterfaceCommunicationSynchronizationType) throws ComponentNotFoundException,
+					PortInterfaceNotDefinedInComponentException, PortInterfaceNotFoundException, ComponentNotDescendantOfAnotherException {
+		HashMap<String, ArchitecturalComponent> componentsIdentifersMap = architecturalModel.getModelComponentsIdentifiersMap();
 		ArchitecturalComponent providingComponent = componentsIdentifersMap.get(providingComponentIdentifier);
 		ArchitecturalComponent requiringComponent = componentsIdentifersMap.get(requiringComponentIdentifier);
 
@@ -283,10 +277,8 @@ public class ArchitecturalModelBuilder implements IArchitecturalModelBuilder {
 		RequiredPortInterface r = getRequiredPortInterface(portInterfaceIdentifier, portInterfaceCommunicationType,
 				portInterfaceCommunicationSynchronizationType);
 
-		HashMap<String, ProvidedPortInterface> providingComponentPortInterfacesMap = providingComponent
-				.getProvidedInterfacesMap();
-		HashMap<String, RequiredPortInterface> requiringComponentPortInterfacesMap = requiringComponent
-				.getRequiredInterfacesMap();
+		HashMap<String, ProvidedPortInterface> providingComponentPortInterfacesMap = providingComponent.getProvidedInterfacesMap();
+		HashMap<String, RequiredPortInterface> requiringComponentPortInterfacesMap = requiringComponent.getRequiredInterfacesMap();
 
 		if (!providingComponentPortInterfacesMap.containsKey(p.getPortInterfaceIdentifier()))
 			throw new PortInterfaceNotDefinedInComponentException(p.getPortInterfaceIdentifier(), providingComponent);
@@ -305,35 +297,33 @@ public class ArchitecturalModelBuilder implements IArchitecturalModelBuilder {
 						providingComponent.getComponentIdentifier());
 
 			if (!innermostProvidingComponent.getProvidedInterfacesMap().containsKey(p.getPortInterfaceIdentifier()))
-				throw new PortInterfaceNotDefinedInComponentException(p.getPortInterfaceIdentifier(),
-						innermostProvidingComponent);
+				throw new PortInterfaceNotDefinedInComponentException(p.getPortInterfaceIdentifier(), innermostProvidingComponent);
 
 		}
 
-		CommunicationLink communicationLink = new CommunicationLink(providingComponent, requiringComponent,
-				innermostProvidingComponent, p, r);
+		CommunicationLink communicationLink = new CommunicationLink(providingComponent, requiringComponent, innermostProvidingComponent, p, r);
 		architecturalModel.getCommunicationLinks().add(communicationLink);
 	}
 
-	private boolean componentIsDescendantOfAnother(ArchitecturalComponent descendantComponent,
-			ArchitecturalComponent parentComponent) {
+	private boolean componentIsDescendantOfAnother(ArchitecturalComponent descendantComponent, ArchitecturalComponent parentComponent) {
 		while ((descendantComponent = descendantComponent.getParentComponent()) != null) {
 			if (descendantComponent.equals(parentComponent))
 				return true;
 		}
 		return false;
 	}
-
-	public void addConcurrentComponentsEntry(String componentIdentifier,
-			ArrayList<String> concurrentComponentsIdentifiers) {
-		HashMap<String, ArchitecturalComponent> componentsIdentifersMap = architecturalModel
-				.getModelComponentsIdentifiersMap();
-		HashSet<ArchitecturalComponent> concurrentComponents = new HashSet<ArchitecturalComponent>();
-		for (String identifer : concurrentComponentsIdentifiers) {
-			concurrentComponents.add(componentsIdentifersMap.get(identifer));
-		}
-		architecturalModel.getConcurrentComponentsMap().put(componentsIdentifersMap.get(componentIdentifier),
-				new HashSet<ArchitecturalComponent>(concurrentComponents));
+	
+	
+	public void addModelConstraint(IArchitecturalModelConstraint modelConstraint) {
+		architecturalModel.getModelConstraints().add(modelConstraint);
+	}
+	
+	public void addModelCompliantStyle(String styleIdentifier) throws ArchitecturalStyleException {
+		ArchitecturalStyle modelCompliantStyle = InMemoryArchitecturalStyles.getInMemoryModelStyles().get(styleIdentifier);
+		if (modelCompliantStyle != null)
+			architecturalModel.getModelCompliantStyles().add(modelCompliantStyle);
+		else
+			throw new ArchitecturalStyleException("This Style was never defined " , styleIdentifier);
 	}
 
 }
