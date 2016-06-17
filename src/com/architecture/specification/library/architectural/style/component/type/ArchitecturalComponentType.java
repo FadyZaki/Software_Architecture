@@ -1,10 +1,8 @@
 package com.architecture.specification.library.architectural.style.component.type;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import com.architecture.specification.library.architectural.model.component.ArchitecturalComponent;
-import com.architecture.specification.library.architectural.model.constraint.component.ArchitecturalComponentConstraint;
+import com.architecture.specification.library.architectural.model.intended.constraint.component.ArchitecturalComponentConstraint;
 
 public class ArchitecturalComponentType {
 

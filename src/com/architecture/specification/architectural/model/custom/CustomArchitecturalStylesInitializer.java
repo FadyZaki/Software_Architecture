@@ -1,7 +1,7 @@
 package com.architecture.specification.architectural.model.custom;
 
-import com.architecture.specification.library.architectural.style.ArchitecturalStylesInitializer;
-import com.architecture.specification.library.architectural.style.ArchitecturalStylesBuilder;
+import com.architecture.specification.library.architectural.style.builder.ArchitecturalStylesBuilder;
+import com.architecture.specification.library.architectural.style.initializer.ArchitecturalStylesInitializer;
 
 public class CustomArchitecturalStylesInitializer extends ArchitecturalStylesInitializer {
 

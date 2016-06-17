@@ -2,7 +2,7 @@ package com.architecture.specification.library.architectural.style;
 
 import java.util.List;
 
-import com.architecture.specification.library.architectural.model.constraint.model.IArchitecturalModelConstraint;
+import com.architecture.specification.library.architectural.model.intended.constraint.model.IArchitecturalModelConstraint;
 
 public class ArchitecturalStyle {
 

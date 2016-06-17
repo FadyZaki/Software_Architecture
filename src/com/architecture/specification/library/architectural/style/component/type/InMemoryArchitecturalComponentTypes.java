@@ -3,9 +3,9 @@ package com.architecture.specification.library.architectural.style.component.typ
 import java.util.Arrays;
 import java.util.HashMap;
 
-import com.architecture.specification.library.architectural.model.constraint.component.ArchitecturalComponentConstraint;
-import com.architecture.specification.library.architectural.model.constraint.component.ComponentProvidedPortsNumberConstraint;
-import com.architecture.specification.library.architectural.model.constraint.component.ComponentRequiredPortsNumberConstraint;
+import com.architecture.specification.library.architectural.model.intended.constraint.component.ArchitecturalComponentConstraint;
+import com.architecture.specification.library.architectural.model.intended.constraint.component.ComponentProvidedPortsNumberConstraint;
+import com.architecture.specification.library.architectural.model.intended.constraint.component.ComponentRequiredPortsNumberConstraint;
 
 public class InMemoryArchitecturalComponentTypes {
 
@@ -21,7 +21,7 @@ public class InMemoryArchitecturalComponentTypes {
 		
 		ArchitecturalComponentType serverComponentType = new ArchitecturalComponentType(SERVER_COMPONENT_TYPE,
 				Arrays.asList(new ArchitecturalComponentConstraint[] { new ComponentRequiredPortsNumberConstraint(1) }));
-		InMemoryComponentTypes.put(serverComponentType.getComponentTypeIdentifier(), clientComponentType);
+		InMemoryComponentTypes.put(serverComponentType.getComponentTypeIdentifier(), serverComponentType);
 		
 	}
 	

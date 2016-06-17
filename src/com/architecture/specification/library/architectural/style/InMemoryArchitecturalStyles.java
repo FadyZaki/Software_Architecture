@@ -5,12 +5,12 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import com.architecture.specification.library.architectural.model.constraint.component.ArchitecturalComponentConstraint;
-import com.architecture.specification.library.architectural.model.constraint.component.ComponentProvidedPortsNumberConstraint;
-import com.architecture.specification.library.architectural.model.constraint.component.ComponentRequiredPortsNumberConstraint;
-import com.architecture.specification.library.architectural.model.constraint.model.IArchitecturalModelConstraint;
-import com.architecture.specification.library.architectural.model.constraint.model.ComponentTypeExistsInModelConstraint;
-import com.architecture.specification.library.architectural.model.constraint.model.ConnectedComponentTypesConstraint;
+import com.architecture.specification.library.architectural.model.intended.constraint.component.ArchitecturalComponentConstraint;
+import com.architecture.specification.library.architectural.model.intended.constraint.component.ComponentProvidedPortsNumberConstraint;
+import com.architecture.specification.library.architectural.model.intended.constraint.component.ComponentRequiredPortsNumberConstraint;
+import com.architecture.specification.library.architectural.model.intended.constraint.model.ComponentTypeExistsInModelConstraint;
+import com.architecture.specification.library.architectural.model.intended.constraint.model.ConnectedComponentTypesConstraint;
+import com.architecture.specification.library.architectural.model.intended.constraint.model.IArchitecturalModelConstraint;
 import com.architecture.specification.library.architectural.style.component.type.ArchitecturalComponentType;
 import com.architecture.specification.library.architectural.style.component.type.InMemoryArchitecturalComponentTypes;
 
