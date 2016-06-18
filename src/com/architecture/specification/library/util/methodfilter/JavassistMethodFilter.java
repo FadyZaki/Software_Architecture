@@ -5,6 +5,6 @@ import javassist.CtMethod;
 
 public interface JavassistMethodFilter {
 
-	public boolean accept (CtMethod tMethod);
+	public boolean accept (CtMethod ctMethod);
 	
 }

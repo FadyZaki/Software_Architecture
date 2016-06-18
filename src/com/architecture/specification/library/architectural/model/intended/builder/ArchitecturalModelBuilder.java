@@ -113,7 +113,6 @@ public class ArchitecturalModelBuilder implements IArchitecturalModelBuilder {
 			adjustComponentsTree(c);
 		}
 		for (ArchitecturalComponent c : root.getChildrenComponents()) {
-			root.getComponentClasses().addAll(c.getComponentClasses());
 			root.getProvidedInterfaces().addAll(c.getProvidedInterfaces());
 			root.getRequiredInterfaces().addAll(c.getRequiredInterfaces());
 		}

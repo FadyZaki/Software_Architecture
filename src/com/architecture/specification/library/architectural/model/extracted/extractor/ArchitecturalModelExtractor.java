@@ -1,6 +1,7 @@
 package com.architecture.specification.library.architectural.model.extracted.extractor;
 
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
 
 import com.architecture.specification.library.architectural.model.extracted.ExtractedArchitecturalModel;
@@ -24,40 +25,60 @@ public class ArchitecturalModelExtractor {
 		this.extractedArchitecturalModel = new ExtractedArchitecturalModel();
 	}
 
-	public ExtractedArchitecturalModel extractArchitecturalModelFromImplementation(List<String> verifiableClassFiles, List<String> blackboxClassFiles, IntendedArchitecturalModel intendedArchitecturalModel) throws IOException {
+	public ExtractedArchitecturalModel extractArchitecturalModelFromImplementation(List<String> verifiableClassFiles, List<String> blackboxClassFiles,
+			List<String> uncheckedClassFiles, IntendedArchitecturalModel intendedArchitecturalModel) throws IOException {
 		ImplementationParser implementationParser = new ImplementationParser();
-		List<ClassMetaData> cmdList = implementationParser.parseImplementationCode(verifiableClassFiles, blackboxClassFiles,
-				intendedArchitecturalModel);
+		implementationParser.parseImplementationCode(verifiableClassFiles, blackboxClassFiles, uncheckedClassFiles, intendedArchitecturalModel);
 
-		for (ClassMetaData cmd : cmdList) {
+		for (ArchitecturalComponent architecturalComponent : intendedArchitecturalModel.getModelComponentsIdentifiersMap().values()) {
+			extractedArchitecturalModel.getActualImplementedComponents().put(architecturalComponent.getComponentIdentifier(),
+					new ArchitecturalComponentImplementationMetaData(architecturalComponent.getComponentIdentifier()));
+		}
+
+		List<ClassMetaData> verifiableClassesMetadata = implementationParser.getVeriafiableClassesMetadata();
+		List<ClassMetaData> blackboxClassesMetadata = implementationParser.getBlackboxClassesMetadata();
+
+		for (ClassMetaData cmd : verifiableClassesMetadata) {
+			System.out.println("aho ya 3am " + cmd.getFullyQualifiedName());
 			if (intendedArchitecturalModel.getClassComponentsMap().containsKey(cmd.getFullyQualifiedName())) {
-//				System.out.println("class name : " + cmd.getFullyQualifiedName());
-//				System.out.println("declared methods : ");
-//				for (MethodDeclarationMetaData mmd : cmd.getDeclaredMethodsMap().values())
-//					System.out.println(mmd.getMethodIdentifier() + " " + mmd.getMethodDeclaringClass() + " " + mmd.getMethodReturnType());
-				for (MethodCallMetaData methodCall : cmd.getMethodCallsMap().values()) {
-					if(!intendedArchitecturalModel.getClassComponentsMap().containsKey(methodCall.getMethodDeclaringClass())) {
-						for (ArchitecturalComponent architecturalComponent : intendedArchitecturalModel.getClassComponentsMap().get(cmd.getFullyQualifiedName())) {
-							if (!(architecturalComponent instanceof BlackboxArchitecturalComponent)) {
-								
-								extractedArchitecturalModel.getMethodCallsToBlackBoxClassesNotPartOfAnyComponent().add(methodCall.getMethodIdentifier());
-								System.out.println("ahom :" + methodCall.getMethodIdentifier() + "  " + methodCall.getMethodDeclaringClass() + "  "  + cmd.getFullyQualifiedName());
-							}
-						}
-					}
-				}
 				for (ArchitecturalComponent architecturalComponent : intendedArchitecturalModel.getClassComponentsMap().get(cmd.getFullyQualifiedName())) {
-					String componentIdentifier = architecturalComponent.getComponentIdentifier();
-					ArchitecturalComponentImplementationMetaData currentComponentMetaData = extractedArchitecturalModel.getActualImplementedComponents()
-							.containsKey(componentIdentifier) ? extractedArchitecturalModel.getActualImplementedComponents().get(componentIdentifier)
-									: new ArchitecturalComponentImplementationMetaData(componentIdentifier);
-					currentComponentMetaData.getComponentImplementedClasses().put(cmd.getFullyQualifiedName(), cmd);
+					if (!(architecturalComponent instanceof BlackboxArchitecturalComponent)) {
+						String componentIdentifier = architecturalComponent.getComponentIdentifier();
+						ArchitecturalComponentImplementationMetaData currentComponentMetaData = extractedArchitecturalModel.getActualImplementedComponents()
+								.get(componentIdentifier);
+						currentComponentMetaData.getComponentImplementedClasses().put(cmd.getFullyQualifiedName(), cmd);
+					}
 				}
 			} else {
 				extractedArchitecturalModel.getImplementedClassesNotIntended().add(cmd.getFullyQualifiedName());
 			}
+
+		}
+
+		for (ClassMetaData cmd : blackboxClassesMetadata) {
+			if (intendedArchitecturalModel.getClassComponentsMap().containsKey(cmd.getFullyQualifiedName())) {
+				for (ArchitecturalComponent architecturalComponent : intendedArchitecturalModel.getModelComponentsIdentifiersMap().values()) {
+					if (architecturalComponent instanceof BlackboxArchitecturalComponent) {
+						String componentIdentifier = architecturalComponent.getComponentIdentifier();
+						ArchitecturalComponentImplementationMetaData currentComponentMetaData = extractedArchitecturalModel.getActualImplementedComponents()
+								.get(componentIdentifier);
+						currentComponentMetaData.getComponentImplementedClasses().put(cmd.getFullyQualifiedName(), cmd);
+					}
+				}
+			}
+		}
+
+		for (ArchitecturalComponent architecturalComponent : intendedArchitecturalModel.getModelComponentsIdentifiersMap().values()) {
+			String componentIdentifier = architecturalComponent.getComponentIdentifier();
+			ArchitecturalComponentImplementationMetaData currentComponentMetaData = extractedArchitecturalModel.getActualImplementedComponents()
+					.get(componentIdentifier);
+
+			for (ArchitecturalComponent child : architecturalComponent.getChildrenComponents()) {
+				currentComponentMetaData.getComponentChildren().put(child.getComponentIdentifier(),
+						extractedArchitecturalModel.getActualImplementedComponents().get(child.getComponentIdentifier()));
+			}
 		}
 		return extractedArchitecturalModel;
-		
+
 	}
 }

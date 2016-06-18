@@ -8,10 +8,12 @@ public class ArchitecturalComponentImplementationMetaData {
 
 	private String componentIdentifier;
 	private HashMap<String, ClassMetaData> componentImplementedClasses;
+	private HashMap<String, ArchitecturalComponentImplementationMetaData> componentChildren;
 
 	public ArchitecturalComponentImplementationMetaData(String componentIdentifier) {
 		this.componentIdentifier = componentIdentifier;
 		this.componentImplementedClasses = new HashMap<String, ClassMetaData>();
+		this.componentChildren = new HashMap<String, ArchitecturalComponentImplementationMetaData>();
 	}
 
 	public String getComponentIdentifier() {
@@ -20,6 +22,10 @@ public class ArchitecturalComponentImplementationMetaData {
 
 	public HashMap<String, ClassMetaData> getComponentImplementedClasses() {
 		return componentImplementedClasses;
+	}
+
+	public HashMap<String, ArchitecturalComponentImplementationMetaData> getComponentChildren() {
+		return componentChildren;
 	}
 
 	public void addClassToComponent(ClassMetaData cmd) {
@@ -42,7 +48,7 @@ public class ArchitecturalComponentImplementationMetaData {
 		return componentProvidedMethods;
 	}
 
-	public HashSetValuedHashMap<String, MethodCallMetaData> getComponentRequiredMethodsMap() {
+	public HashSetValuedHashMap<String, MethodCallMetaData> getComponentRequiredMethods() {
 		HashSetValuedHashMap<String, MethodCallMetaData> methodCallsMap = new HashSetValuedHashMap<String, MethodCallMetaData>();
 		for (ClassMetaData cmd : getComponentImplementedClasses().values()) {
 			for (MethodCallMetaData mc : cmd.getMethodCallsMap().values()) {
@@ -53,7 +59,58 @@ public class ArchitecturalComponentImplementationMetaData {
 		}
 		return methodCallsMap;
 	}
+	
+	public HashSetValuedHashMap<String, MethodCallMetaData> getComponentMessagePassingMethods() {
+		HashSetValuedHashMap<String, MethodCallMetaData> methodCallsMap = new HashSetValuedHashMap<String, MethodCallMetaData>();
+		for (ClassMetaData cmd : getComponentImplementedClasses().values()) {
+			for (MethodCallMetaData mc : cmd.getMethodCallsMap().values()) {
+				if (mc.getMethodIdentifier().startsWith("sendMessageThrough") || mc.getMethodIdentifier().startsWith("receiveMessageThrough"))
+					methodCallsMap.put(mc.getMethodIdentifier(), mc);
+			}
+		}
+		return methodCallsMap;
+	}
 
+	public HashMap<String, ClassMetaData> getAllComponentImplementedClasses() {
+		HashMap<String, ClassMetaData> allComponentImplementedClasses = getComponentImplementedClasses();
+		for (ArchitecturalComponentImplementationMetaData ac : this.getComponentChildren().values()) {
+			allComponentImplementedClasses.putAll(ac.getAllComponentImplementedClasses());
+		}
+		return allComponentImplementedClasses;
+	}
+
+	public HashSetValuedHashMap<String, MethodDeclarationMetaData> getAllComponentDeclaredMethods() {
+		HashSetValuedHashMap<String, MethodDeclarationMetaData> allComponentDeclaredMethods = getComponentDeclaredMethods();
+		for (ArchitecturalComponentImplementationMetaData ac : this.getComponentChildren().values()) {
+			allComponentDeclaredMethods.putAll(ac.getAllComponentDeclaredMethods());
+		}
+		return allComponentDeclaredMethods;
+	}
+
+	public HashSetValuedHashMap<String, MethodDeclarationMetaData> getAllComponentProvidedMethods() {
+		HashSetValuedHashMap<String, MethodDeclarationMetaData> allComponentProvidedMethods = getComponentProvidedMethods();
+		for (ArchitecturalComponentImplementationMetaData ac : this.getComponentChildren().values()) {
+			allComponentProvidedMethods.putAll(ac.getAllComponentProvidedMethods());
+		}
+		return allComponentProvidedMethods;
+	}
+
+	public HashSetValuedHashMap<String, MethodCallMetaData> getAllComponentRequiredMethods() {
+		HashSetValuedHashMap<String, MethodCallMetaData> allComponentMethodCallsMap = getComponentRequiredMethods();
+		for (ArchitecturalComponentImplementationMetaData ac : this.getComponentChildren().values()) {
+			allComponentMethodCallsMap.putAll(ac.getAllComponentRequiredMethods());
+		}
+		return allComponentMethodCallsMap;
+	}
+
+	public HashSetValuedHashMap<String, MethodCallMetaData> getAllComponentMessagePassingMethods() {
+		HashSetValuedHashMap<String, MethodCallMetaData> allComponentMethodCallsMap = getComponentMessagePassingMethods();
+		for (ArchitecturalComponentImplementationMetaData ac : this.getComponentChildren().values()) {
+			allComponentMethodCallsMap.putAll(ac.getAllComponentMessagePassingMethods());
+		}
+		return allComponentMethodCallsMap;
+	}
+	
 	@Override
 	public int hashCode() {
 		return this.getComponentIdentifier().hashCode();

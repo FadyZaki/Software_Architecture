@@ -44,9 +44,10 @@ public class CADL {
 		
 		List<String> verifiableClassFiles = Arrays.asList("D:/Work/TrialWorkspace/CS5001-150023144-practical-04/bin");
 		List<String> blackboxClassFiles = Arrays.asList("D:/Work/TrialWorkspace/CS5001-150023144-practical-04/ip2location.jar");
+		List<String> uncheckedClassFiles = Arrays.asList("C:/Program Files/Java/jdk1.8.0_60/jre/lib/rt.jar");
 
 		ArchitecturalModelExtractor architecturalModelExtractor = new ArchitecturalModelExtractor();
-		ExtractedArchitecturalModel extractedArchitecturalModel = architecturalModelExtractor.extractArchitecturalModelFromImplementation(verifiableClassFiles, blackboxClassFiles, intendedArchitecturalModel);
+		ExtractedArchitecturalModel extractedArchitecturalModel = architecturalModelExtractor.extractArchitecturalModelFromImplementation(verifiableClassFiles, blackboxClassFiles, uncheckedClassFiles, intendedArchitecturalModel);
 		
 		
 		ArchitecturalModelVerifier verifier = new ArchitecturalModelVerifier(intendedArchitecturalModel, extractedArchitecturalModel);

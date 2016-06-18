@@ -51,11 +51,13 @@ import com.architecture.specification.library.util.classfilter.InterfaceClassFil
 import com.architecture.specification.library.util.classfilter.JavassistClassFilter;
 import com.architecture.specification.library.util.classfilter.NotClassFilter;
 import com.architecture.specification.library.util.classfilter.PublicClassFilter;
+import com.architecture.specification.library.util.methodfilter.AddObserverMethodFilter;
 import com.architecture.specification.library.util.methodfilter.AndMethodFilter;
-import com.architecture.specification.library.util.methodfilter.ClassBasedMethodFilter;
+import com.architecture.specification.library.util.methodfilter.ClassListBasedMethodFilter;
 import com.architecture.specification.library.util.methodfilter.JavassistMethodFilter;
 import com.architecture.specification.library.util.methodfilter.MainMethodFilter;
 import com.architecture.specification.library.util.methodfilter.NotMethodFilter;
+import com.architecture.specification.library.util.methodfilter.NotifyObserversMethodFilter;
 import com.architecture.specification.library.util.methodfilter.OrMethodFilter;
 import com.architecture.specification.library.util.methodfilter.PublicMethodFilter;
 
@@ -70,21 +72,30 @@ import javassist.expr.MethodCall;
 
 public class ImplementationParser {
 
+	List<ClassMetaData> veriafiableClassesMetadata;
+	List<ClassMetaData> blackboxClassesMetadata;
+
 	public ImplementationParser() {
+		veriafiableClassesMetadata = new ArrayList<ClassMetaData>();
+		blackboxClassesMetadata = new ArrayList<ClassMetaData>();
 	}
 
-	public List<ClassMetaData> parseImplementationCode(List<String> classFilesToBeVerified, List<String> blackboxClassFiles,
-			IntendedArchitecturalModel intendedArchitecturalModel) throws IOException{
+	public void parseImplementationCode(List<String> veriafiableClassFilesDirectories, List<String> blackboxClassFilesDirectories,
+			List<String> uncheckedClassFiles, IntendedArchitecturalModel intendedArchitecturalModel) throws IOException {
 
 		ClassPool pool = ClassPool.getDefault();
-		List<ClassMetaData> relevantClassesMetadata = new ArrayList<ClassMetaData>();
+
 		try {
-			for (String classFileToBeVerified : classFilesToBeVerified) {
+			for (String classFileToBeVerified : veriafiableClassFilesDirectories) {
 				pool.insertClassPath(classFileToBeVerified);
 			}
-			for (String blackboxFile : blackboxClassFiles) {
+			for (String blackboxFile : blackboxClassFilesDirectories) {
 				pool.insertClassPath(blackboxFile);
 			}
+			for (String uncheckedFile : uncheckedClassFiles) {
+				pool.insertClassPath(uncheckedFile);
+			}
+
 			JavassistClassFilter classFilter = new AndClassFilter(new NotClassFilter(new EnumClassFilter()), // Must
 																												// not
 																												// be
@@ -95,49 +106,30 @@ public class ImplementationParser {
 																// class
 					new PublicClassFilter()); // Must be a public class
 
-			JavassistMethodFilter methodDeclarationFilter = new AndMethodFilter(new NotMethodFilter(new ClassBasedMethodFilter(pool.get("java.lang.Object"))), // methods
-					// must
-					// be
-					// not
-					// inherited
-					// from
-					// java.lang.Object
-					// Class
-					new NotMethodFilter(new ClassBasedMethodFilter(pool.get("java.lang.Thread"))) // methods
-																									// must
-																									// be
-																									// not
-																									// inherited
-																									// from
-																									// java.lang.Thread
-																									// Class
-					
-					
-			);
-
 			ClassFinder cf = new ClassFinder();
+			HashSet<String> verifiableClassFiles = new HashSet<String>();
+			HashSet<String> blackboxClassFiles = new HashSet<String>();
 			List<CtClass> checkedClasses = new ArrayList<CtClass>();
-			for (String classFile : classFilesToBeVerified) {
-				cf.add(new File(classFile));
+			for (String classFileDirectory : veriafiableClassFilesDirectories) {
+				cf.add(new File(classFileDirectory));
 				for (String c : cf.findClasses()) {
 					checkedClasses.add(pool.get(c));
+					verifiableClassFiles.add(c);
 				}
 			}
 
-			for (ArchitecturalComponent architecturalComponent : intendedArchitecturalModel.getModelComponentsIdentifiersMap().values()) {
-				if (architecturalComponent instanceof BlackboxArchitecturalComponent) {
-					for (String classname : architecturalComponent.getComponentClasses()) {
-						try {
-							checkedClasses.add(pool.get(classname));
-						} catch (NotFoundException nfe) {
-							//do nothing
-						}
-					}
+			for (String classFileDirectory : blackboxClassFilesDirectories) {
+				cf.add(new File(classFileDirectory));
+				for (String c : cf.findClasses()) {
+					checkedClasses.add(pool.get(c));
+					blackboxClassFiles.add(c);
 				}
 			}
+
+			List<CtClass> filteredCheckedClasses = JavassistFilterUtility.filterClasses(classFilter, checkedClasses);
 
 			List<CtClass> uncheckedClasses = new ArrayList<CtClass>();
-			for (String classFile : blackboxClassFiles) {
+			for (String classFile : uncheckedClassFiles) {
 				cf.add(new File(classFile));
 				for (String c : cf.findClasses()) {
 					CtClass currentClass = pool.get(c);
@@ -145,30 +137,15 @@ public class ImplementationParser {
 						uncheckedClasses.add(currentClass);
 					}
 				}
+
+				uncheckedClasses.addAll(JavassistFilterUtility.filterClasses(new NotClassFilter(classFilter), checkedClasses));
 			}
 
-			List<CtClass> filteredCheckedClasses = JavassistFilterUtility.filterClasses(classFilter, checkedClasses);
-			List<CtClass> filteredUncheckedClasses = JavassistFilterUtility.filterClasses(classFilter, uncheckedClasses);
-
-			System.out.println("ahoooom");
-			for (CtClass ctt : filteredCheckedClasses) {
-				System.out.println(ctt.getName());
-			}
-			
-			System.out.println("ahoooom tany");
-			for (CtClass ctt : filteredUncheckedClasses) {
-				System.out.println(ctt.getName());
-			}
-			OrMethodFilter filteredClassesMethodBasedFilter = new OrMethodFilter();
-			for (CtClass filteredClass : filteredCheckedClasses) {
-				filteredClassesMethodBasedFilter.addFilter(new ClassBasedMethodFilter(filteredClass));
-			}
-			for (CtClass uncheckedBlackBoxClass : filteredUncheckedClasses) {
-				filteredClassesMethodBasedFilter.addFilter(new ClassBasedMethodFilter(uncheckedBlackBoxClass));
-			}
-			JavassistMethodFilter methodCallsFilter = new AndMethodFilter(methodDeclarationFilter, filteredClassesMethodBasedFilter);
+			JavassistMethodFilter methodDeclarationsFilter = new NotMethodFilter(new ClassListBasedMethodFilter(uncheckedClasses));
+			JavassistMethodFilter methodCallsFilter = new OrMethodFilter(methodDeclarationsFilter, new NotifyObserversMethodFilter(), new AddObserverMethodFilter());
 
 			for (CtClass ctClass : filteredCheckedClasses) {
+
 				String fullyQualifiedName = ctClass.getName();
 
 				HashSet<CtClass> recursiveSuperClasses = new HashSet<CtClass>();
@@ -190,7 +167,7 @@ public class ImplementationParser {
 
 				Set<CtMethod> allDeclaredMethods = SetUtils.union(new HashSet<>(Arrays.asList(ctClass.getMethods())),
 						new HashSet<>(Arrays.asList(ctClass.getDeclaredMethods())));
-				List<CtMethod> filteredDeclaredMethods = JavassistFilterUtility.filterMethods(methodDeclarationFilter, new ArrayList<>(allDeclaredMethods));
+				List<CtMethod> filteredDeclaredMethods = JavassistFilterUtility.filterMethods(methodDeclarationsFilter, new ArrayList<>(allDeclaredMethods));
 
 				HashSetValuedHashMap<String, MethodDeclarationMetaData> declaredMethodsMap = new HashSetValuedHashMap<String, MethodDeclarationMetaData>();
 				HashSetValuedHashMap<String, MethodDeclarationMetaData> providedMethodsMap = new HashSetValuedHashMap<String, MethodDeclarationMetaData>();
@@ -202,6 +179,7 @@ public class ImplementationParser {
 
 					if (new PublicMethodFilter().accept(ctMethod))
 						isPublicMethod = true;
+					
 
 					List<CtMethod> methodCalls = new ArrayList<CtMethod>();
 					HashSetValuedHashMap<String, MethodCallMetaData> methodCallsMap = new HashSetValuedHashMap<String, MethodCallMetaData>();
@@ -265,8 +243,12 @@ public class ImplementationParser {
 
 				}
 
-				relevantClassesMetadata
-						.add(new ClassMetaData(fullyQualifiedName, declaredMethodsMap, providedMethodsMap, implementedInterfacesNames, superClassesNames));
+				ClassMetaData cmd = new ClassMetaData(fullyQualifiedName, declaredMethodsMap, providedMethodsMap, implementedInterfacesNames,
+						superClassesNames);
+				if (verifiableClassFiles.contains(cmd.getFullyQualifiedName()))
+					veriafiableClassesMetadata.add(cmd);
+				else
+					blackboxClassesMetadata.add(cmd);
 			}
 
 			// for (ArchitecturalComponentImplementationMetaData ac :
@@ -287,7 +269,14 @@ public class ImplementationParser {
 			e.printStackTrace();
 		}
 
-		return relevantClassesMetadata;
+	}
+
+	public List<ClassMetaData> getVeriafiableClassesMetadata() {
+		return veriafiableClassesMetadata;
+	}
+
+	public List<ClassMetaData> getBlackboxClassesMetadata() {
+		return blackboxClassesMetadata;
 	}
 
 }

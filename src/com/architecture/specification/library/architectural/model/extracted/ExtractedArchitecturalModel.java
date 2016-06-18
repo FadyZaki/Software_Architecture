@@ -15,21 +15,15 @@ public class ExtractedArchitecturalModel {
 	HashMap<String, ArchitecturalComponentImplementationMetaData> actualImplementedComponents;
 	
 	Set<String> implementedClassesNotIntended;
-	Set<String> methodCallsToBlackBoxClassesNotPartOfAnyComponent;
 
 	public ExtractedArchitecturalModel() {
 		super();
 		actualImplementedComponents = new HashMap<String, ArchitecturalComponentImplementationMetaData>();
 		implementedClassesNotIntended = new HashSet<String>();
-		methodCallsToBlackBoxClassesNotPartOfAnyComponent = new HashSet<String>();
 	}
 	
 	public Set<String> getImplementedClassesNotIntended() {
 		return implementedClassesNotIntended;
-	}
-
-	public Set<String> getMethodCallsToBlackBoxClassesNotPartOfAnyComponent() {
-		return methodCallsToBlackBoxClassesNotPartOfAnyComponent;
 	}
 
 	public HashMap<String, ArchitecturalComponentImplementationMetaData> getActualImplementedComponents() {

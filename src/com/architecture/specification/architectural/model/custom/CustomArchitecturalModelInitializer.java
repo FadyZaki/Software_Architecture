@@ -35,6 +35,7 @@ public class CustomArchitecturalModelInitializer extends ArchitecturalModelIniti
 	private static final String MODEL_COMPONENT = "Model Component";
 
 	private static final String IDENTIFY_GEO_LOCATION_USING_IP_ADDRESS_PORT = "identifyGeoLocationUsingIpAddress";
+	private static final String RETRIEVE_GEO_LOCATION_INFORMATION = "retrieveGeoLocationInformation";
 
 	private static final String IP_QUERY_PORT = "IPQuery";
 	private static final String COUNTRY_LONG_PORT = "countryLong";
@@ -75,9 +76,10 @@ public class CustomArchitecturalModelInitializer extends ArchitecturalModelIniti
 	private static final String ADJUST_GUI_COMPONENT_PORT = "adjustGuiComponent";
 	private static final String DISPLAY_SUCCESSFUL_LOGIN_PORT = "displaySuccessfulLogin";
 	private static final String DISPLAY_UNSUCCESSFUL_LOGIN_PORT = "displayUnsuccessfulLogin";
-	private static final String DISPLAY_SOCIAL_NETWORK_MESSAGES_PORT = "displaySocialNetworkMessages";
+	private static final String DISPLAY_UPDATED_SOCIAL_NETWORK = "displayUpdatedSocialNetwork";
 
 	private static final String HANDLE_CLIENT_COMMANDS_PORT = "handleClientCommands";
+	private static final String RUN_PORT = "run";
 
 	public CustomArchitecturalModelInitializer(ArchitecturalModelBuilder builder) {
 		super(builder);
@@ -86,6 +88,9 @@ public class CustomArchitecturalModelInitializer extends ArchitecturalModelIniti
 	@Override
 	public void initializeModelPortInterfaces() {
 		builder.addPortInterface(IDENTIFY_GEO_LOCATION_USING_IP_ADDRESS_PORT, PortInterfaceCommunicationType.TASK_EXECUTION,
+				PortInterfaceCommunicationSynchronizationType.SYNC);
+		
+		builder.addPortInterface(RETRIEVE_GEO_LOCATION_INFORMATION, PortInterfaceCommunicationType.TASK_EXECUTION,
 				PortInterfaceCommunicationSynchronizationType.SYNC);
 
 		builder.addPortInterface(IP_QUERY_PORT, PortInterfaceCommunicationType.TASK_EXECUTION, PortInterfaceCommunicationSynchronizationType.SYNC);
@@ -137,6 +142,9 @@ public class CustomArchitecturalModelInitializer extends ArchitecturalModelIniti
 
 		builder.addPortInterface(SUBSCRIPTION_FEE_PORT, PortInterfaceCommunicationType.SHARED_DATA,
 				PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_NO_CALLBACK);
+		
+		builder.addPortInterface(RUN_PORT, PortInterfaceCommunicationType.TASK_EXECUTION,
+				PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_NO_CALLBACK);
 
 		builder.addPortInterface(SOCKET_PORT, PortInterfaceCommunicationType.MESSAGE_PASSING,
 				PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_CALLBACK);
@@ -153,7 +161,7 @@ public class CustomArchitecturalModelInitializer extends ArchitecturalModelIniti
 		builder.addPortInterface(DISPLAY_UNSUCCESSFUL_LOGIN_PORT, PortInterfaceCommunicationType.TASK_EXECUTION,
 				PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_NO_CALLBACK);
 
-		builder.addPortInterface(DISPLAY_SOCIAL_NETWORK_MESSAGES_PORT, PortInterfaceCommunicationType.TASK_EXECUTION,
+		builder.addPortInterface(DISPLAY_UPDATED_SOCIAL_NETWORK, PortInterfaceCommunicationType.TASK_EXECUTION,
 				PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_NO_CALLBACK);
 
 		builder.addPortInterface(BUILD_CLIENT_COMMANDS_PORT, PortInterfaceCommunicationType.TASK_EXECUTION, PortInterfaceCommunicationSynchronizationType.SYNC);
@@ -173,9 +181,9 @@ public class CustomArchitecturalModelInitializer extends ArchitecturalModelIniti
 		builder.addPortInterface(USER_SUBSCRIPTION_FEE_PORT, PortInterfaceCommunicationType.SHARED_DATA,
 				PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_NO_CALLBACK);
 		builder.addPortInterface(USER_LOGIN_STATE_PORT, PortInterfaceCommunicationType.SHARED_DATA,
-				PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_NO_CALLBACK);
+				PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_CALLBACK);
 		builder.addPortInterface(CURRENT_SOCIAL_NETWORK_STATE_PORT, PortInterfaceCommunicationType.SHARED_DATA,
-				PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_NO_CALLBACK);
+				PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_CALLBACK);
 
 	}
 
@@ -184,9 +192,6 @@ public class CustomArchitecturalModelInitializer extends ArchitecturalModelIniti
 
 		HashSet<RequiredPortInterface> serverComponentRequiredInterfaces = new HashSet<RequiredPortInterface>();
 		serverComponentRequiredInterfaces.add(builder.getRequiredPortInterface(SOCKET_PORT));
-		serverComponentRequiredInterfaces.add(builder.getRequiredPortInterface(IP_QUERY_PORT));
-		serverComponentRequiredInterfaces.add(builder.getRequiredPortInterface(CITY_PORT));
-		serverComponentRequiredInterfaces.add(builder.getRequiredPortInterface(COUNTRY_LONG_PORT));
 		
 		builder.addComponent(SERVER_COMPONENT, null,
 				new ArrayList<String>(Arrays.asList(new String[] { "com.practicalfour.socialnetwork.server.SocialNetworkServerMain" })), null,
@@ -201,12 +206,19 @@ public class CustomArchitecturalModelInitializer extends ArchitecturalModelIniti
 
 		HashSet<ProvidedPortInterface> geoLocatorComponentProvidedInterfaces = new HashSet<ProvidedPortInterface>();
 		geoLocatorComponentProvidedInterfaces.add(builder.getProvidedPortInterface(IDENTIFY_GEO_LOCATION_USING_IP_ADDRESS_PORT));
+		geoLocatorComponentProvidedInterfaces.add(builder.getProvidedPortInterface(RETRIEVE_GEO_LOCATION_INFORMATION));
 
+		HashSet<RequiredPortInterface> geoLocatorComponentRequiredInterfaces = new HashSet<RequiredPortInterface>();
+		geoLocatorComponentRequiredInterfaces.add(builder.getRequiredPortInterface(IP_QUERY_PORT));
+		geoLocatorComponentRequiredInterfaces.add(builder.getRequiredPortInterface(CITY_PORT));
+		geoLocatorComponentRequiredInterfaces.add(builder.getRequiredPortInterface(COUNTRY_LONG_PORT));
+		
 		builder.addComponent(GEO_LOCATOR_COMPONENT, SERVER_COMPONENT,
 				new ArrayList<String>(
 						Arrays.asList(new String[] { "com.practicalfour.geolocation.GeoLocation", "com.practicalfour.geolocation.GeoLocatorUtility" })),
-				geoLocatorComponentProvidedInterfaces, null, null, null, false);
+				geoLocatorComponentProvidedInterfaces, geoLocatorComponentRequiredInterfaces, null, null, false);
 
+		
 		HashSet<ProvidedPortInterface> ip2LocationComponentProvidedInterfaces = new HashSet<ProvidedPortInterface>();
 		ip2LocationComponentProvidedInterfaces.add(builder.getProvidedPortInterface(IP_QUERY_PORT));
 		ip2LocationComponentProvidedInterfaces.add(builder.getProvidedPortInterface(COUNTRY_LONG_PORT));
@@ -266,6 +278,9 @@ public class CustomArchitecturalModelInitializer extends ArchitecturalModelIniti
 						"com.practicalfour.socialnetwork.user.AdministratorUser" })),
 				userComponentProvidedInterfaces, null, null, null, false);
 
+		HashSet<ProvidedPortInterface> clientHandlerComponentProvidedInterfaces = new HashSet<ProvidedPortInterface>();
+		clientHandlerComponentProvidedInterfaces.add(builder.getProvidedPortInterface(RUN_PORT));
+
 		HashSet<RequiredPortInterface> clientHandlerComponentRequiredInterfaces = new HashSet<RequiredPortInterface>();
 		clientHandlerComponentRequiredInterfaces.add(builder.getRequiredPortInterface(REGISTER_USER_PORT));
 		clientHandlerComponentRequiredInterfaces.add(builder.getRequiredPortInterface(AUTHORIZE_USER_PORT));
@@ -278,7 +293,7 @@ public class CustomArchitecturalModelInitializer extends ArchitecturalModelIniti
 
 		builder.addComponent(CLIENT_HANDLER_COMPONENT, SERVER_COMPONENT, new ArrayList<>(Arrays.asList(new String[] {
 				"com.practicalfour.socialnetwork.server.SocialNetworkServerConnectionHandler", "com.practicalfour.socialnetwork.server.SocialNetworkServer" })),
-				null, clientHandlerComponentRequiredInterfaces, null, null, false);
+				clientHandlerComponentProvidedInterfaces, clientHandlerComponentRequiredInterfaces, null, null, false);
 
 		HashSet<ProvidedPortInterface> serverHandlerComponentProvidedInterfaces = new HashSet<ProvidedPortInterface>();
 		serverHandlerComponentProvidedInterfaces.add(builder.getProvidedPortInterface(SOCKET_PORT));
@@ -306,7 +321,7 @@ public class CustomArchitecturalModelInitializer extends ArchitecturalModelIniti
 		controllerComponentRequiredInterfaces.add(builder.getRequiredPortInterface(BUILD_CLIENT_COMMANDS_PORT));
 		controllerComponentRequiredInterfaces.add(builder.getRequiredPortInterface(DISPLAY_SUCCESSFUL_LOGIN_PORT));
 		controllerComponentRequiredInterfaces.add(builder.getRequiredPortInterface(DISPLAY_UNSUCCESSFUL_LOGIN_PORT));
-		controllerComponentRequiredInterfaces.add(builder.getRequiredPortInterface(DISPLAY_SOCIAL_NETWORK_MESSAGES_PORT));
+		controllerComponentRequiredInterfaces.add(builder.getRequiredPortInterface(DISPLAY_UPDATED_SOCIAL_NETWORK));
 		controllerComponentRequiredInterfaces.add(builder.getRequiredPortInterface(USER_ACCOUNT_TYPE_PORT));
 		controllerComponentRequiredInterfaces.add(builder.getRequiredPortInterface(USER_SUBSCRIPTION_FEE_PORT));
 		controllerComponentRequiredInterfaces.add(builder.getRequiredPortInterface(USER_LOGIN_STATE_PORT));
@@ -319,11 +334,13 @@ public class CustomArchitecturalModelInitializer extends ArchitecturalModelIniti
 		HashSet<ProvidedPortInterface> UIComponentProvidedInterfaces = new HashSet<ProvidedPortInterface>();
 		UIComponentProvidedInterfaces.add(builder.getProvidedPortInterface(DISPLAY_SUCCESSFUL_LOGIN_PORT));
 		UIComponentProvidedInterfaces.add(builder.getProvidedPortInterface(DISPLAY_UNSUCCESSFUL_LOGIN_PORT));
-		UIComponentProvidedInterfaces.add(builder.getProvidedPortInterface(DISPLAY_SOCIAL_NETWORK_MESSAGES_PORT));
+		UIComponentProvidedInterfaces.add(builder.getProvidedPortInterface(DISPLAY_UPDATED_SOCIAL_NETWORK));
 
 		HashSet<RequiredPortInterface> UIComponentRequiredInterfaces = new HashSet<RequiredPortInterface>();
 		UIComponentRequiredInterfaces.add(builder.getRequiredPortInterface(HANDLE_CLIENT_COMMANDS_PORT));
 		UIComponentRequiredInterfaces.add(builder.getRequiredPortInterface(ADJUST_GUI_COMPONENT_PORT));
+		UIComponentRequiredInterfaces.add(builder.getRequiredPortInterface(USER_ACCOUNT_TYPE_PORT));
+		UIComponentRequiredInterfaces.add(builder.getRequiredPortInterface(USER_SUBSCRIPTION_FEE_PORT));
 
 		builder.addComponent(UI_COMPONENT, CLIENT_COMPONENT,
 				new ArrayList<>(Arrays.asList(new String[] { "com.practicalfour.socialnetwork.client.SocialNetworkClientGUI" })), UIComponentProvidedInterfaces,
@@ -389,7 +406,10 @@ public class CustomArchitecturalModelInitializer extends ArchitecturalModelIniti
 
 		builder.addCommunicationLink(UI_COMPONENT, CONTROLLER_COMPONENT, null, DISPLAY_SUCCESSFUL_LOGIN_PORT);
 		builder.addCommunicationLink(UI_COMPONENT, CONTROLLER_COMPONENT, null, DISPLAY_UNSUCCESSFUL_LOGIN_PORT);
-		builder.addCommunicationLink(UI_COMPONENT, CONTROLLER_COMPONENT, null, DISPLAY_SOCIAL_NETWORK_MESSAGES_PORT);
+		builder.addCommunicationLink(UI_COMPONENT, CONTROLLER_COMPONENT, null, DISPLAY_UPDATED_SOCIAL_NETWORK);
+		
+		builder.addCommunicationLink(MODEL_COMPONENT, UI_COMPONENT, null, USER_ACCOUNT_TYPE_PORT);
+		builder.addCommunicationLink(MODEL_COMPONENT, UI_COMPONENT, null, USER_SUBSCRIPTION_FEE_PORT);
 
 	}
 
