@@ -81,7 +81,7 @@ public class ImplementationParser {
 	}
 
 	public void parseImplementationCode(List<String> veriafiableClassFilesDirectories, List<String> blackboxClassFilesDirectories,
-			List<String> uncheckedClassFiles, IntendedArchitecturalModel intendedArchitecturalModel) throws IOException {
+			List<String> uncheckedClassFiles) throws IOException {
 
 		ClassPool pool = ClassPool.getDefault();
 
@@ -185,8 +185,6 @@ public class ImplementationParser {
 					HashSetValuedHashMap<String, MethodCallMetaData> methodCallsMap = new HashSetValuedHashMap<String, MethodCallMetaData>();
 					HashMap<String, FieldAccessMetaData> fieldAccessMap = new HashMap<String, FieldAccessMetaData>();
 					try {
-						// System.out.println("Declared Method name : " +
-						// ctMethod.getName());
 						ctMethod.instrument(new ExprEditor() {
 
 							public void edit(MethodCall m) throws CannotCompileException {
@@ -251,18 +249,6 @@ public class ImplementationParser {
 					blackboxClassesMetadata.add(cmd);
 			}
 
-			// for (ArchitecturalComponentImplementationMetaData ac :
-			// implementedArchitecturalModel.getActualImplementedComponents().values())
-			// {
-			// for (ClassMetaData c :
-			// ac.getComponentImplementedClasses().values()) {
-			// System.out.println("class name : " + c.getFullyQualifiedName());
-			// System.out.println("declared methods : ");
-			// for (String s : c.getDeclaredMethodsMap().keySet()) {
-			// System.out.println(s);
-			// }
-			// }
-			// }
 
 		} catch (NotFoundException e) {
 			// TODO Auto-generated catch block

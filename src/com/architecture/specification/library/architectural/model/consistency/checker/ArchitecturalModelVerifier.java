@@ -106,7 +106,6 @@ public class ArchitecturalModelVerifier {
 		}
 
 		if (!(architecturalComponent instanceof BlackboxArchitecturalComponent)) {
-			System.out.println("el component el moshkela" + architecturalComponent.getComponentIdentifier());
 			SetView<MethodDeclarationMetaData> availableMethodsNotIntended = SetUtils.difference(
 					new HashSet<MethodDeclarationMetaData>(implementedArchitecturalComponent.getComponentProvidedMethods().values()),
 					intendedComponentProvidedMethods);
@@ -351,7 +350,6 @@ public class ArchitecturalModelVerifier {
 		// Each class for each setter method in the providing component has to
 		// be observed by the requiring component
 		if (portInterface.getPortInterfaceCommunicationSynchronizationType() != PortInterfaceCommunicationSynchronizationType.ASYNC_WITH_NO_CALLBACK) {
-			System.out.println(requiringComponent.getAllComponentRequiredMethods());
 			if (requiringComponent.getAllComponentRequiredMethods().containsKey("addObserver")) {
 				for (MethodCallMetaData methodCall : requiringComponent.getAllComponentRequiredMethods().get("addObserver")) {
 					if (methodCall.getMethodReturnType().equals("void") && methodCall.getMethodParameterTypes().size() == 1) {

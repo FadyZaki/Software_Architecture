@@ -5,9 +5,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import com.architecture.specification.library.architectural.model.intended.constraint.component.ArchitecturalComponentConstraint;
-import com.architecture.specification.library.architectural.model.intended.constraint.component.ComponentProvidedPortsNumberConstraint;
-import com.architecture.specification.library.architectural.model.intended.constraint.component.ComponentRequiredPortsNumberConstraint;
+import com.architecture.specification.library.architectural.model.intended.constraint.component.IArchitecturalComponentConstraint;
+import com.architecture.specification.library.architectural.model.intended.constraint.component.ComponentMinimumProvidedPortsNumberConstraint;
+import com.architecture.specification.library.architectural.model.intended.constraint.component.ComponentMinimumRequiredPortsNumberConstraint;
 import com.architecture.specification.library.architectural.model.intended.constraint.model.ComponentTypeExistsInModelConstraint;
 import com.architecture.specification.library.architectural.model.intended.constraint.model.ConnectedComponentTypesConstraint;
 import com.architecture.specification.library.architectural.model.intended.constraint.model.IArchitecturalModelConstraint;

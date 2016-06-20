@@ -20,15 +20,16 @@ import javassist.expr.MethodCall;
 public class ArchitecturalModelExtractor {
 
 	ExtractedArchitecturalModel extractedArchitecturalModel;
+	ImplementationParser implementationParser;
 
-	public ArchitecturalModelExtractor() {
+	public ArchitecturalModelExtractor(ImplementationParser implementationParser) {
 		this.extractedArchitecturalModel = new ExtractedArchitecturalModel();
+		this.implementationParser = implementationParser;
 	}
 
 	public ExtractedArchitecturalModel extractArchitecturalModelFromImplementation(List<String> verifiableClassFiles, List<String> blackboxClassFiles,
 			List<String> uncheckedClassFiles, IntendedArchitecturalModel intendedArchitecturalModel) throws IOException {
-		ImplementationParser implementationParser = new ImplementationParser();
-		implementationParser.parseImplementationCode(verifiableClassFiles, blackboxClassFiles, uncheckedClassFiles, intendedArchitecturalModel);
+		implementationParser.parseImplementationCode(verifiableClassFiles, blackboxClassFiles, uncheckedClassFiles);
 
 		for (ArchitecturalComponent architecturalComponent : intendedArchitecturalModel.getModelComponentsIdentifiersMap().values()) {
 			extractedArchitecturalModel.getActualImplementedComponents().put(architecturalComponent.getComponentIdentifier(),
@@ -39,7 +40,6 @@ public class ArchitecturalModelExtractor {
 		List<ClassMetaData> blackboxClassesMetadata = implementationParser.getBlackboxClassesMetadata();
 
 		for (ClassMetaData cmd : verifiableClassesMetadata) {
-			System.out.println("aho ya 3am " + cmd.getFullyQualifiedName());
 			if (intendedArchitecturalModel.getClassComponentsMap().containsKey(cmd.getFullyQualifiedName())) {
 				for (ArchitecturalComponent architecturalComponent : intendedArchitecturalModel.getClassComponentsMap().get(cmd.getFullyQualifiedName())) {
 					if (!(architecturalComponent instanceof BlackboxArchitecturalComponent)) {

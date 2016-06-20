@@ -14,7 +14,7 @@ import com.architecture.specification.library.architectural.model.intended.Inten
 import com.architecture.specification.library.architectural.model.intended.communication.link.CommunicationLink;
 import com.architecture.specification.library.architectural.model.intended.component.ArchitecturalComponent;
 import com.architecture.specification.library.architectural.model.intended.component.BlackboxArchitecturalComponent;
-import com.architecture.specification.library.architectural.model.intended.constraint.component.ArchitecturalComponentConstraint;
+import com.architecture.specification.library.architectural.model.intended.constraint.component.IArchitecturalComponentConstraint;
 import com.architecture.specification.library.architectural.model.intended.constraint.model.IArchitecturalModelConstraint;
 import com.architecture.specification.library.architectural.model.intended.initializer.IArchitecturalModelInitializer;
 import com.architecture.specification.library.architectural.model.intended.portinterface.PortInterface;
@@ -84,9 +84,15 @@ public class ArchitecturalModelBuilder implements IArchitecturalModelBuilder {
 		}
 
 		for (ArchitecturalComponent architecturalComponent : architecturalModel.getModelComponentsIdentifiersMap().values()) {
-			for (ArchitecturalComponentConstraint componentConstraint : architecturalComponent.getComponentConstraints())
+			for (IArchitecturalComponentConstraint componentConstraint : architecturalComponent.getComponentConstraints())
 				if (!componentConstraint.verify(architecturalComponent))
 					throw new BrokenConstraintException(architecturalComponent.getComponentIdentifier(), componentConstraint.getClass().getName());
+		}
+		
+		for (ArchitecturalStyle style : architecturalModel.getModelCompliantStyles()) {
+			for (IArchitecturalModelConstraint modelConstraint : style.getStyleConstraints())
+			if (!modelConstraint.verify(architecturalModel))
+				throw new BrokenConstraintException(architecturalModel.getModelIdentifier(), modelConstraint.getClass().getSimpleName());
 		}
 
 	}
@@ -210,7 +216,7 @@ public class ArchitecturalModelBuilder implements IArchitecturalModelBuilder {
 
 	public void addComponent(String componentIdentifier, String parentComponentIdentifier, ArrayList<String> componentClasses,
 			HashSet<ProvidedPortInterface> providedInterfaces, HashSet<RequiredPortInterface> requiredInterfaces,
-			HashSet<ArchitecturalComponentType> componentTypes, ArrayList<ArchitecturalComponentConstraint> componentConstraints, boolean isBlackbox)
+			HashSet<ArchitecturalComponentType> componentTypes, ArrayList<IArchitecturalComponentConstraint> componentConstraints, boolean isBlackbox)
 					throws ComponentNotFoundException {
 		HashMap<String, ArchitecturalComponent> componentsIdentifersMap = architecturalModel.getModelComponentsIdentifiersMap();
 		ArchitecturalComponent parentComponent = componentsIdentifersMap.get(parentComponentIdentifier);
@@ -316,8 +322,9 @@ public class ArchitecturalModelBuilder implements IArchitecturalModelBuilder {
 
 	public void addModelCompliantStyle(String styleIdentifier) throws ArchitecturalStyleException {
 		ArchitecturalStyle modelCompliantStyle = InMemoryArchitecturalStyles.getInMemoryModelStyles().get(styleIdentifier);
-		if (modelCompliantStyle != null)
+		if (modelCompliantStyle != null) {
 			architecturalModel.getModelCompliantStyles().add(modelCompliantStyle);
+			}
 		else
 			throw new ArchitecturalStyleException("This Style was never defined ", styleIdentifier);
 	}

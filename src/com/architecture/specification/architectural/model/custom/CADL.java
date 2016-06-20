@@ -40,18 +40,19 @@ public class CADL {
 		CustomArchitecturalModelInitializer customArchitecturalModelInitializer = new CustomArchitecturalModelInitializer(
 				architecturalModelBuilder);
 		IntendedArchitecturalModel intendedArchitecturalModel = architecturalModelBuilder.buildArchitecturalModel(customArchitecturalModelInitializer);
-		System.out.println("Architectural Model Successfully built");
+		System.out.println("Architectural Model Successfully Built");
 		
 		List<String> verifiableClassFiles = Arrays.asList("D:/Work/TrialWorkspace/CS5001-150023144-practical-04/bin");
 		List<String> blackboxClassFiles = Arrays.asList("D:/Work/TrialWorkspace/CS5001-150023144-practical-04/ip2location.jar");
 		List<String> uncheckedClassFiles = Arrays.asList("C:/Program Files/Java/jdk1.8.0_60/jre/lib/rt.jar");
 
-		ArchitecturalModelExtractor architecturalModelExtractor = new ArchitecturalModelExtractor();
+		ArchitecturalModelExtractor architecturalModelExtractor = new ArchitecturalModelExtractor(new ImplementationParser());
 		ExtractedArchitecturalModel extractedArchitecturalModel = architecturalModelExtractor.extractArchitecturalModelFromImplementation(verifiableClassFiles, blackboxClassFiles, uncheckedClassFiles, intendedArchitecturalModel);
 		
 		
 		ArchitecturalModelVerifier verifier = new ArchitecturalModelVerifier(intendedArchitecturalModel, extractedArchitecturalModel);
 		verifier.verifySpecificationAgainstImplementation();
+		System.out.println("Architectural Model Successfully Verified");
 
 		
 

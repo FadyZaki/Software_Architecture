@@ -2,19 +2,19 @@ package com.architecture.specification.library.architectural.style.component.typ
 
 import java.util.List;
 
-import com.architecture.specification.library.architectural.model.intended.constraint.component.ArchitecturalComponentConstraint;
+import com.architecture.specification.library.architectural.model.intended.constraint.component.IArchitecturalComponentConstraint;
 
 public class ArchitecturalComponentType {
 
 	private String componentTypeIdentifier;
-	private List<ArchitecturalComponentConstraint> componentTypeConstraints;
+	private List<IArchitecturalComponentConstraint> componentTypeConstraints;
 
-	public ArchitecturalComponentType(String componentTypeIdentifier, List<ArchitecturalComponentConstraint> componentTypeConstraints) {
+	public ArchitecturalComponentType(String componentTypeIdentifier, List<IArchitecturalComponentConstraint> componentTypeConstraints) {
 		this.componentTypeIdentifier = componentTypeIdentifier;
 		this.componentTypeConstraints = componentTypeConstraints;
 	}
 
-	public List<ArchitecturalComponentConstraint> getComponentTypeConstraints() {
+	public List<IArchitecturalComponentConstraint> getComponentTypeConstraints() {
 		return componentTypeConstraints;
 	}
 	

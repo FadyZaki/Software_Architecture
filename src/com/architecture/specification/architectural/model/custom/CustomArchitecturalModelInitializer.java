@@ -12,6 +12,8 @@ import com.architecture.specification.library.architectural.model.intended.porti
 import com.architecture.specification.library.architectural.model.intended.portinterface.ProvidedPortInterface;
 import com.architecture.specification.library.architectural.model.intended.portinterface.RequiredPortInterface;
 import com.architecture.specification.library.architectural.style.InMemoryArchitecturalStyles;
+import com.architecture.specification.library.architectural.style.component.type.ArchitecturalComponentType;
+import com.architecture.specification.library.architectural.style.component.type.InMemoryArchitecturalComponentTypes;
 import com.architecture.specification.library.exceptions.ArchitecturalStyleException;
 import com.architecture.specification.library.exceptions.ComponentNotDescendantOfAnotherException;
 import com.architecture.specification.library.exceptions.ComponentNotFoundException;
@@ -193,16 +195,23 @@ public class CustomArchitecturalModelInitializer extends ArchitecturalModelIniti
 		HashSet<RequiredPortInterface> serverComponentRequiredInterfaces = new HashSet<RequiredPortInterface>();
 		serverComponentRequiredInterfaces.add(builder.getRequiredPortInterface(SOCKET_PORT));
 		
+		HashSet<ArchitecturalComponentType> serverComponentTypes = new HashSet<ArchitecturalComponentType>();
+		serverComponentTypes.add(InMemoryArchitecturalComponentTypes.getInMemoryComponentTypes().get(InMemoryArchitecturalComponentTypes.SERVER_COMPONENT_TYPE));
+		
 		builder.addComponent(SERVER_COMPONENT, null,
 				new ArrayList<String>(Arrays.asList(new String[] { "com.practicalfour.socialnetwork.server.SocialNetworkServerMain" })), null,
-				serverComponentRequiredInterfaces, null, null, false);
+				serverComponentRequiredInterfaces, serverComponentTypes, null, false);
 
 		
 		HashSet<ProvidedPortInterface> clientComponentProvidedInterfaces = new HashSet<ProvidedPortInterface>();
 		clientComponentProvidedInterfaces.add(builder.getProvidedPortInterface(SOCKET_PORT));
+		
+		HashSet<ArchitecturalComponentType> clientComponentTypes = new HashSet<ArchitecturalComponentType>();
+		clientComponentTypes.add(InMemoryArchitecturalComponentTypes.getInMemoryComponentTypes().get(InMemoryArchitecturalComponentTypes.CLIENT_COMPONENT_TYPE));
+		
 		builder.addComponent(CLIENT_COMPONENT, null,
 				new ArrayList<String>(Arrays.asList(new String[] { "com.practicalfour.socialnetwork.client.SocialNetworkClientMain" })),
-				clientComponentProvidedInterfaces, null, null, null, false);
+				clientComponentProvidedInterfaces, null, clientComponentTypes, null, false);
 
 		HashSet<ProvidedPortInterface> geoLocatorComponentProvidedInterfaces = new HashSet<ProvidedPortInterface>();
 		geoLocatorComponentProvidedInterfaces.add(builder.getProvidedPortInterface(IDENTIFY_GEO_LOCATION_USING_IP_ADDRESS_PORT));
@@ -420,7 +429,7 @@ public class CustomArchitecturalModelInitializer extends ArchitecturalModelIniti
 
 	@Override
 	public void addStylesToModel() throws ArchitecturalStyleException {
-		// builder.addModelCompliantStyle(InMemoryArchitecturalStyles.SERVER_CLIENT_STYLE);
+		builder.addModelCompliantStyle(InMemoryArchitecturalStyles.SERVER_CLIENT_STYLE);
 	}
 
 }

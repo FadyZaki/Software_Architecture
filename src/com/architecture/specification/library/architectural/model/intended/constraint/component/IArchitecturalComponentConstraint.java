@@ -2,7 +2,7 @@ package com.architecture.specification.library.architectural.model.intended.cons
 
 import com.architecture.specification.library.architectural.model.intended.component.ArchitecturalComponent;
 
-public interface ArchitecturalComponentConstraint {
+public interface IArchitecturalComponentConstraint {
 
 	public boolean verify(ArchitecturalComponent componentToBeVerified);
 }

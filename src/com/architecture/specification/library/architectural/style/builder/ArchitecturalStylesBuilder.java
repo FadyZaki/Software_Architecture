@@ -2,7 +2,7 @@ package com.architecture.specification.library.architectural.style.builder;
 
 import java.util.List;
 
-import com.architecture.specification.library.architectural.model.intended.constraint.component.ArchitecturalComponentConstraint;
+import com.architecture.specification.library.architectural.model.intended.constraint.component.IArchitecturalComponentConstraint;
 import com.architecture.specification.library.architectural.model.intended.constraint.model.IArchitecturalModelConstraint;
 import com.architecture.specification.library.architectural.style.ArchitecturalStyle;
 import com.architecture.specification.library.architectural.style.InMemoryArchitecturalStyles;
@@ -22,7 +22,7 @@ public class ArchitecturalStylesBuilder implements IArchitecturalStylesBuilder {
 		}
 	}
 
-	public void addComponentType(String componentTypeIdentifier, List<ArchitecturalComponentConstraint> componentTypeConstraints) {
+	public void addComponentType(String componentTypeIdentifier, List<IArchitecturalComponentConstraint> componentTypeConstraints) {
 		InMemoryArchitecturalComponentTypes.getInMemoryComponentTypes().put(componentTypeIdentifier,
 				new ArchitecturalComponentType(componentTypeIdentifier, componentTypeConstraints));
 	}
