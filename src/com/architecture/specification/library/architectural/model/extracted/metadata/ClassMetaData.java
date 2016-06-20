@@ -7,6 +7,11 @@ import org.apache.commons.collections4.multimap.HashSetValuedHashMap;
 
 import com.architecture.specification.library.architectural.model.intended.component.ArchitecturalComponent;
 
+/**
+ * Metadata related to class access
+ * @author FadyShining
+ *
+ */
 public class ClassMetaData {
 
 	private String fullyQualifiedName;

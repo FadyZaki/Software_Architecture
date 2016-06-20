@@ -4,6 +4,11 @@ import java.util.List;
 
 import com.architecture.specification.library.architectural.model.intended.constraint.component.IArchitecturalComponentConstraint;
 
+/**
+ * Defines a type of component in terms of component level constraints
+ * @author FadyShining
+ *
+ */
 public class ArchitecturalComponentType {
 
 	private String componentTypeIdentifier;

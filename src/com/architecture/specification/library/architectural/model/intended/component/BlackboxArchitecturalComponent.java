@@ -8,6 +8,11 @@ import com.architecture.specification.library.architectural.model.intended.porti
 import com.architecture.specification.library.architectural.model.intended.portinterface.RequiredPortInterface;
 import com.architecture.specification.library.architectural.style.component.type.ArchitecturalComponentType;
 
+/**
+ * A blackbox architectural component represents an external component to the system under structure
+ * @author FadyShining
+ *
+ */
 public class BlackboxArchitecturalComponent extends ArchitecturalComponent {
 
 	public BlackboxArchitecturalComponent(String componentIdentifier, ArchitecturalComponent parentComponent, ArrayList<String> componentClasses,

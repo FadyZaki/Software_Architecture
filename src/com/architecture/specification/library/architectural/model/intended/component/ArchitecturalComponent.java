@@ -9,6 +9,11 @@ import com.architecture.specification.library.architectural.model.intended.porti
 import com.architecture.specification.library.architectural.model.intended.portinterface.RequiredPortInterface;
 import com.architecture.specification.library.architectural.style.component.type.ArchitecturalComponentType;
 
+/**
+ * Defines an architectural component in terms classes, port interfaces and constraints
+ * @author FadyShining
+ *
+ */
 public class ArchitecturalComponent {
 
 	private String componentIdentifier;

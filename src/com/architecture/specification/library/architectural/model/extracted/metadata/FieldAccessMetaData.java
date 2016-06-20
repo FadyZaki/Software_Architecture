@@ -1,5 +1,10 @@
 package com.architecture.specification.library.architectural.model.extracted.metadata;
 
+/**
+ * Metadata related to FieldAccess
+ * @author FadyShining
+ *
+ */
 public class FieldAccessMetaData {
 
 	private String fieldIdentifier;

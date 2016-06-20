@@ -40,6 +40,9 @@ import com.architecture.specification.library.exceptions.PortInterfaceNotFoundEx
 import com.architecture.specification.library.exceptions.UnusedComponentException;
 import com.architecture.specification.library.exceptions.UnusedRequiredPortInterfaceException;
 
+/**
+ * This class is responsible for building the intended architectural model 
+ */
 public class ArchitecturalModelBuilder implements IArchitecturalModelBuilder {
 
 	public IntendedArchitecturalModel getArchitecturalModel() {
@@ -52,6 +55,9 @@ public class ArchitecturalModelBuilder implements IArchitecturalModelBuilder {
 		this.architecturalModel = new IntendedArchitecturalModel(modelIdentifier);
 	}
 
+	/**
+	 * This method builds the architectural model by calling the custom initializer methods
+	 */
 	@Override
 	public IntendedArchitecturalModel buildArchitecturalModel(IArchitecturalModelInitializer initializer)
 			throws IncompatiblePortInterfacesException, UnusedRequiredPortInterfaceException, UnusedComponentException, ComponentNotFoundException,
@@ -77,6 +83,10 @@ public class ArchitecturalModelBuilder implements IArchitecturalModelBuilder {
 
 	}
 
+	/**
+	 * verifies all component and model constraints defined by the model
+	 * @throws BrokenConstraintException
+	 */
 	private void verifyConstraints() throws BrokenConstraintException {
 		for (IArchitecturalModelConstraint modelConstraint : architecturalModel.getModelConstraints()) {
 			if (!modelConstraint.verify(architecturalModel))
@@ -164,6 +174,10 @@ public class ArchitecturalModelBuilder implements IArchitecturalModelBuilder {
 		}
 	}
 
+	/**
+	 * verifies that each component engages in at least one commmunication link
+	 * @throws UnusedComponentException
+	 */
 	private void verifyEachComponentIsUsed() throws UnusedComponentException {
 		HashSet<CommunicationLink> commLinks = architecturalModel.getCommunicationLinks();
 		HashSet<ArchitecturalComponent> usedComponents = new HashSet<ArchitecturalComponent>();
@@ -194,6 +208,10 @@ public class ArchitecturalModelBuilder implements IArchitecturalModelBuilder {
 
 	}
 
+	/**
+	 * verifies that each required port engages in at least one communication link
+	 * @throws UnusedRequiredPortInterfaceException
+	 */
 	private void verifyEachRequiredPortIsUsed() throws UnusedRequiredPortInterfaceException {
 
 		HashMap<ArchitecturalComponent, HashSet<RequiredPortInterface>> componentsUsedRequiredPortInterfacesMap = new HashMap<ArchitecturalComponent, HashSet<RequiredPortInterface>>();
@@ -214,6 +232,19 @@ public class ArchitecturalModelBuilder implements IArchitecturalModelBuilder {
 		}
 	}
 
+	/**
+	 * adds a component to the intended model 
+	 *
+	 * @param componentIdentifier
+	 * @param parentComponentIdentifier
+	 * @param componentClasses
+	 * @param providedInterfaces
+	 * @param requiredInterfaces
+	 * @param componentTypes
+	 * @param componentConstraints
+	 * @param isBlackbox
+	 * @throws ComponentNotFoundException
+	 */
 	public void addComponent(String componentIdentifier, String parentComponentIdentifier, ArrayList<String> componentClasses,
 			HashSet<ProvidedPortInterface> providedInterfaces, HashSet<RequiredPortInterface> requiredInterfaces,
 			HashSet<ArchitecturalComponentType> componentTypes, ArrayList<IArchitecturalComponentConstraint> componentConstraints, boolean isBlackbox)
@@ -233,6 +264,12 @@ public class ArchitecturalModelBuilder implements IArchitecturalModelBuilder {
 		architecturalModel.getModelComponentsIdentifiersMap().put(architecturalComponent.getComponentIdentifier(), architecturalComponent);
 	}
 
+	/**
+	 * adds a required and provided port interfaces with the specified properties to the intended model 
+	 * @param portInterfaceIdentifier
+	 * @param portInterfaceCommunicationType
+	 * @param portInterfaceCommunicationSynchronizationType
+	 */
 	public void addPortInterface(String portInterfaceIdentifier, PortInterfaceCommunicationType portInterfaceCommunicationType,
 			PortInterfaceCommunicationSynchronizationType portInterfaceCommunicationSynchronizationType) {
 
@@ -264,6 +301,17 @@ public class ArchitecturalModelBuilder implements IArchitecturalModelBuilder {
 
 	}
 
+	/**
+	 * adds a communication link to the intended model 
+	 * @param providingComponentIdentifier
+	 * @param requiringComponentIdentifier
+	 * @param innermostProvidingComponentIdentifier
+	 * @param portInterfaceIdentifier
+	 * @throws ComponentNotFoundException
+	 * @throws PortInterfaceNotDefinedInComponentException
+	 * @throws PortInterfaceNotFoundException
+	 * @throws ComponentNotDescendantOfAnotherException
+	 */
 	public void addCommunicationLink(String providingComponentIdentifier, String requiringComponentIdentifier, String innermostProvidingComponentIdentifier,
 			String portInterfaceIdentifier) throws ComponentNotFoundException, PortInterfaceNotDefinedInComponentException, PortInterfaceNotFoundException,
 					ComponentNotDescendantOfAnotherException {
@@ -316,10 +364,19 @@ public class ArchitecturalModelBuilder implements IArchitecturalModelBuilder {
 		return false;
 	}
 
+	/**
+	 * adds a constraint to be followed by the model
+	 * @param modelConstraint
+	 */
 	public void addModelConstraint(IArchitecturalModelConstraint modelConstraint) {
 		architecturalModel.getModelConstraints().add(modelConstraint);
 	}
 
+	/**
+	 * adds an architectural style to be followed by the model
+	 * @param styleIdentifier
+	 * @throws ArchitecturalStyleException
+	 */
 	public void addModelCompliantStyle(String styleIdentifier) throws ArchitecturalStyleException {
 		ArchitecturalStyle modelCompliantStyle = InMemoryArchitecturalStyles.getInMemoryModelStyles().get(styleIdentifier);
 		if (modelCompliantStyle != null) {

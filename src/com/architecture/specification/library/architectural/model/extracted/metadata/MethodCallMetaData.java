@@ -2,6 +2,11 @@ package com.architecture.specification.library.architectural.model.extracted.met
 
 import java.util.List;
 
+/**
+ * Metadata related to method calls
+ * @author FadyShining
+ *
+ */
 public class MethodCallMetaData {
 
 	private String methodIdentifier;

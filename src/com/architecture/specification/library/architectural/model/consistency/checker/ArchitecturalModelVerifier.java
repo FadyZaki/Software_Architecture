@@ -26,6 +26,10 @@ import com.architecture.specification.library.architectural.model.intended.porti
 import com.architecture.specification.library.architectural.model.intended.portinterface.RequiredPortInterface;
 import com.architecture.specification.library.exceptions.VerificationException;
 
+/**
+ * This class is responsible for checking inconsistencies between
+ * the intended model and the extracted model
+ */
 public class ArchitecturalModelVerifier {
 
 	IntendedArchitecturalModel intendedArchitecturalModel;
@@ -37,6 +41,11 @@ public class ArchitecturalModelVerifier {
 		this.extractedArchitecturalModel = extractedArchitecturalModel;
 	}
 
+	/**
+	 * This method is responsible for checking inconsistencies between
+	 * the intended model and the extracted model
+	 * @throws VerificationException
+	 */
 	public void verifySpecificationAgainstImplementation() throws VerificationException {
 
 		// Consistency checking between classes in the architecture

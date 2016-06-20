@@ -70,6 +70,11 @@ import javassist.expr.ExprEditor;
 import javassist.expr.FieldAccess;
 import javassist.expr.MethodCall;
 
+/**
+ * This class is responsible for parsing the class files and generating
+ * useful metadata that can be used by the model extractor to extract the
+ * implemented model
+ */
 public class ImplementationParser {
 
 	List<ClassMetaData> veriafiableClassesMetadata;
@@ -80,6 +85,15 @@ public class ImplementationParser {
 		blackboxClassesMetadata = new ArrayList<ClassMetaData>();
 	}
 
+	/**
+	 * This method is responsible for parsing the class files and generating
+	 * useful metadata that can be used by the model extractor to extract the
+	 * implemented model
+	 * @param veriafiableClassFilesDirectories directory containing all verifiable class files
+	 * @param blackboxClassFilesDirectories directory containing all blackbox class files
+	 * @param uncheckedClassFiles directory containing all unchecked class files
+	 * @throws IOException
+	 */
 	public void parseImplementationCode(List<String> veriafiableClassFilesDirectories, List<String> blackboxClassFilesDirectories,
 			List<String> uncheckedClassFiles) throws IOException {
 

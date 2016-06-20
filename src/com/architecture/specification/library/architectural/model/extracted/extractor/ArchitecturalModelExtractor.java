@@ -17,6 +17,9 @@ import com.architecture.specification.library.exceptions.VerificationException;
 
 import javassist.expr.MethodCall;
 
+/**
+ * This class is responsible for extracting the model from the metadata provided by the parser
+ */
 public class ArchitecturalModelExtractor {
 
 	ExtractedArchitecturalModel extractedArchitecturalModel;
@@ -27,6 +30,15 @@ public class ArchitecturalModelExtractor {
 		this.implementationParser = implementationParser;
 	}
 
+	/**
+	 * This method extracts the model from the metadata provided by the parser
+	 * @param verifiableClassFiles class files to be verified
+	 * @param blackboxClassFiles external components class files
+	 * @param uncheckedClassFiles class files to be ignored
+	 * @param intendedArchitecturalModel
+	 * @return
+	 * @throws IOException
+	 */
 	public ExtractedArchitecturalModel extractArchitecturalModelFromImplementation(List<String> verifiableClassFiles, List<String> blackboxClassFiles,
 			List<String> uncheckedClassFiles, IntendedArchitecturalModel intendedArchitecturalModel) throws IOException {
 		implementationParser.parseImplementationCode(verifiableClassFiles, blackboxClassFiles, uncheckedClassFiles);

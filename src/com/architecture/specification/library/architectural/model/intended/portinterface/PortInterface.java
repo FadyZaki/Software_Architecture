@@ -2,6 +2,11 @@ package com.architecture.specification.library.architectural.model.intended.port
 
 import com.architecture.specification.library.util.HelperConstants;
 
+/**
+ * Represents an endpoint of a communication channel provided or required by component
+ * @author FadyShining
+ *
+ */
 public abstract class PortInterface {
 
 	private String portInterfaceIdentifier;

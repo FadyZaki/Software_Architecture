@@ -6,6 +6,11 @@ import com.architecture.specification.library.exceptions.ComponentNotFoundExcept
 import com.architecture.specification.library.exceptions.PortInterfaceNotDefinedInComponentException;
 import com.architecture.specification.library.exceptions.PortInterfaceNotFoundException;
 
+/**
+ * defines all methods required to be implemented by a custom initializer to build an intended model
+ * @author FadyShining
+ *
+ */
 public interface IArchitecturalModelInitializer {
 
 	public void initializeModelPortInterfaces();

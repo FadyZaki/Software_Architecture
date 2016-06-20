@@ -4,6 +4,12 @@ import java.util.HashMap;
 
 import org.apache.commons.collections4.multimap.HashSetValuedHashMap;
 
+
+/**
+ * Implemented Component Metadata
+ * @author FadyShining
+ *
+ */
 public class ArchitecturalComponentImplementationMetaData {
 
 	private String componentIdentifier;
@@ -32,6 +38,10 @@ public class ArchitecturalComponentImplementationMetaData {
 		componentImplementedClasses.put(cmd.getFullyQualifiedName(), cmd);
 	}
 
+	/**
+	 * 
+	 * @return all methods declared by a component
+	 */
 	public HashSetValuedHashMap<String, MethodDeclarationMetaData> getComponentDeclaredMethods() {
 		HashSetValuedHashMap<String, MethodDeclarationMetaData> componentDeclaredMethods = new HashSetValuedHashMap<String, MethodDeclarationMetaData>();
 		for (ClassMetaData cmd : this.getComponentImplementedClasses().values()) {
@@ -40,6 +50,10 @@ public class ArchitecturalComponentImplementationMetaData {
 		return componentDeclaredMethods;
 	}
 
+	/**
+	 * 
+	 * @return all methods provided by a component
+	 */
 	public HashSetValuedHashMap<String, MethodDeclarationMetaData> getComponentProvidedMethods() {
 		HashSetValuedHashMap<String, MethodDeclarationMetaData> componentProvidedMethods = new HashSetValuedHashMap<String, MethodDeclarationMetaData>();
 		for (ClassMetaData cmd : this.getComponentImplementedClasses().values()) {
@@ -48,6 +62,10 @@ public class ArchitecturalComponentImplementationMetaData {
 		return componentProvidedMethods;
 	}
 
+	/**
+	 * 
+	 * @return all methods required by a component
+	 */
 	public HashSetValuedHashMap<String, MethodCallMetaData> getComponentRequiredMethods() {
 		HashSetValuedHashMap<String, MethodCallMetaData> methodCallsMap = new HashSetValuedHashMap<String, MethodCallMetaData>();
 		for (ClassMetaData cmd : getComponentImplementedClasses().values()) {
@@ -71,6 +89,10 @@ public class ArchitecturalComponentImplementationMetaData {
 		return methodCallsMap;
 	}
 
+	/**
+	 * 
+	 * @return all classes related to a specific component
+	 */
 	public HashMap<String, ClassMetaData> getAllComponentImplementedClasses() {
 		HashMap<String, ClassMetaData> allComponentImplementedClasses = getComponentImplementedClasses();
 		for (ArchitecturalComponentImplementationMetaData ac : this.getComponentChildren().values()) {
@@ -87,6 +109,10 @@ public class ArchitecturalComponentImplementationMetaData {
 		return allComponentDeclaredMethods;
 	}
 
+	/**
+	 * 
+	 * @return all provided methods including the ones inherited from subcomponents
+	 */
 	public HashSetValuedHashMap<String, MethodDeclarationMetaData> getAllComponentProvidedMethods() {
 		HashSetValuedHashMap<String, MethodDeclarationMetaData> allComponentProvidedMethods = getComponentProvidedMethods();
 		for (ArchitecturalComponentImplementationMetaData ac : this.getComponentChildren().values()) {
@@ -95,6 +121,10 @@ public class ArchitecturalComponentImplementationMetaData {
 		return allComponentProvidedMethods;
 	}
 
+	/**
+	 * 
+	 * @return all required methods including the ones inherited from subcomponents
+	 */
 	public HashSetValuedHashMap<String, MethodCallMetaData> getAllComponentRequiredMethods() {
 		HashSetValuedHashMap<String, MethodCallMetaData> allComponentMethodCallsMap = getComponentRequiredMethods();
 		for (ArchitecturalComponentImplementationMetaData ac : this.getComponentChildren().values()) {

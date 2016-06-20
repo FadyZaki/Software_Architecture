@@ -5,6 +5,11 @@ import java.util.List;
 
 import org.apache.commons.collections4.multimap.HashSetValuedHashMap;
 
+/**
+ * Metadata related to methods' declarations
+ * @author FadyShining
+ *
+ */
 public class MethodDeclarationMetaData {
 
 	private String methodIdentifier;
