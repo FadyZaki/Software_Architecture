@@ -17,31 +17,32 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import com.architecture.specification.exceptions.ArchitecturalStyleException;
+import com.architecture.specification.exceptions.BlackBoxCommunicationLinkException;
+import com.architecture.specification.exceptions.BrokenConstraintException;
+import com.architecture.specification.exceptions.ComponentNotDescendantOfAnotherException;
+import com.architecture.specification.exceptions.ComponentNotFoundException;
+import com.architecture.specification.exceptions.IncompatiblePortInterfacesException;
+import com.architecture.specification.exceptions.PortInterfaceNotDefinedInComponentException;
+import com.architecture.specification.exceptions.PortInterfaceNotFoundException;
+import com.architecture.specification.exceptions.UnusedComponentException;
+import com.architecture.specification.exceptions.UnusedRequiredPortInterfaceException;
+import com.architecture.specification.exceptions.VerificationException;
+import com.architecture.specification.model.intended.builder.ArchitecturalModelBuilder;
+import com.architecture.specification.model.intended.component.ArchitecturalComponent;
+import com.architecture.specification.model.intended.constraint.model.IArchitecturalModelConstraint;
+import com.architecture.specification.model.intended.initializer.ArchitecturalModelInitializer;
+import com.architecture.specification.model.intended.portinterface.PortInterface;
+import com.architecture.specification.model.intended.portinterface.ProvidedPortInterface;
+import com.architecture.specification.model.intended.portinterface.RequiredPortInterface;
+import com.architecture.specification.style.ArchitecturalStyle;
+
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.atMost;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-
-import com.architecture.specification.library.architectural.model.intended.component.ArchitecturalComponent;
-import com.architecture.specification.library.architectural.model.intended.constraint.model.IArchitecturalModelConstraint;
-import com.architecture.specification.library.architectural.model.intended.initializer.ArchitecturalModelInitializer;
-import com.architecture.specification.library.architectural.model.intended.portinterface.PortInterface;
-import com.architecture.specification.library.architectural.model.intended.portinterface.ProvidedPortInterface;
-import com.architecture.specification.library.architectural.model.intended.portinterface.RequiredPortInterface;
-import com.architecture.specification.library.architectural.style.ArchitecturalStyle;
-import com.architecture.specification.library.exceptions.ArchitecturalStyleException;
-import com.architecture.specification.library.exceptions.BlackBoxCommunicationLinkException;
-import com.architecture.specification.library.exceptions.BrokenConstraintException;
-import com.architecture.specification.library.exceptions.ComponentNotDescendantOfAnotherException;
-import com.architecture.specification.library.exceptions.ComponentNotFoundException;
-import com.architecture.specification.library.exceptions.IncompatiblePortInterfacesException;
-import com.architecture.specification.library.exceptions.PortInterfaceNotDefinedInComponentException;
-import com.architecture.specification.library.exceptions.PortInterfaceNotFoundException;
-import com.architecture.specification.library.exceptions.UnusedComponentException;
-import com.architecture.specification.library.exceptions.UnusedRequiredPortInterfaceException;
-import com.architecture.specification.library.exceptions.VerificationException;
 
 import javassist.NotFoundException;
 

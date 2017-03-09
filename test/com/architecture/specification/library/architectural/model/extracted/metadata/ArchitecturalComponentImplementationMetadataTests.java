@@ -1,8 +1,6 @@
 package com.architecture.specification.library.architectural.model.extracted.metadata;
 
 import static org.junit.Assert.assertEquals;
-
-import com.architecture.specification.library.architectural.style.InMemoryArchitecturalStyles;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
 
@@ -17,17 +15,20 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import com.architecture.specification.library.architectural.model.intended.component.ArchitecturalComponent;
-import com.architecture.specification.library.architectural.model.intended.constraint.model.IArchitecturalModelConstraint;
-import com.architecture.specification.library.architectural.model.intended.portinterface.PortInterface;
-import com.architecture.specification.library.architectural.model.intended.portinterface.ProvidedPortInterface;
-import com.architecture.specification.library.architectural.model.intended.portinterface.RequiredPortInterface;
-import com.architecture.specification.library.architectural.style.ArchitecturalStyle;
-import com.architecture.specification.library.exceptions.ArchitecturalStyleException;
-import com.architecture.specification.library.exceptions.ComponentNotDescendantOfAnotherException;
-import com.architecture.specification.library.exceptions.ComponentNotFoundException;
-import com.architecture.specification.library.exceptions.PortInterfaceNotDefinedInComponentException;
-import com.architecture.specification.library.exceptions.PortInterfaceNotFoundException;
+import com.architecture.specification.exceptions.ArchitecturalStyleException;
+import com.architecture.specification.exceptions.ComponentNotDescendantOfAnotherException;
+import com.architecture.specification.exceptions.ComponentNotFoundException;
+import com.architecture.specification.exceptions.PortInterfaceNotDefinedInComponentException;
+import com.architecture.specification.exceptions.PortInterfaceNotFoundException;
+import com.architecture.specification.model.extracted.metadata.ArchitecturalComponentImplementationMetaData;
+import com.architecture.specification.model.extracted.metadata.ClassMetaData;
+import com.architecture.specification.model.intended.component.ArchitecturalComponent;
+import com.architecture.specification.model.intended.constraint.model.IArchitecturalModelConstraint;
+import com.architecture.specification.model.intended.portinterface.PortInterface;
+import com.architecture.specification.model.intended.portinterface.ProvidedPortInterface;
+import com.architecture.specification.model.intended.portinterface.RequiredPortInterface;
+import com.architecture.specification.style.ArchitecturalStyle;
+import com.architecture.specification.style.InMemoryArchitecturalStyles;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ArchitecturalComponentImplementationMetadataTests {

@@ -1,0 +1,21 @@
+package com.architecture.specification.model.intended.builder;
+
+import com.architecture.specification.exceptions.ArchitecturalStyleException;
+import com.architecture.specification.exceptions.BlackBoxCommunicationLinkException;
+import com.architecture.specification.exceptions.BrokenConstraintException;
+import com.architecture.specification.exceptions.ComponentNotDescendantOfAnotherException;
+import com.architecture.specification.exceptions.ComponentNotFoundException;
+import com.architecture.specification.exceptions.IncompatiblePortInterfacesException;
+import com.architecture.specification.exceptions.PortInterfaceNotDefinedInComponentException;
+import com.architecture.specification.exceptions.PortInterfaceNotFoundException;
+import com.architecture.specification.exceptions.UnusedComponentException;
+import com.architecture.specification.exceptions.UnusedRequiredPortInterfaceException;
+import com.architecture.specification.model.intended.IntendedArchitecturalModel;
+import com.architecture.specification.model.intended.initializer.IArchitecturalModelInitializer;
+
+public interface IArchitecturalModelBuilder {
+
+	public IntendedArchitecturalModel buildArchitecturalModel(IArchitecturalModelInitializer architecturalModelInitializer)
+			throws IncompatiblePortInterfacesException, UnusedRequiredPortInterfaceException, UnusedComponentException, ComponentNotFoundException, PortInterfaceNotDefinedInComponentException, PortInterfaceNotFoundException, ComponentNotDescendantOfAnotherException, BrokenConstraintException, ArchitecturalStyleException, BlackBoxCommunicationLinkException;
+	
+}
