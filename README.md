@@ -2,6 +2,6 @@
 Integrating Software Architecture with Implementation
 
 # THIS CODE IS MY OWN PROPERTY
-# NO ONE IS ALLOWED TO USE IT UNLESS THEY ASK ME FIRST.
+# PLEASE ASK BEFORE USING IT
 
 Fady Zaki
